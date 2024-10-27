@@ -3,6 +3,7 @@ using System;
 using DonateHope.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DonateHope.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241027120819_AddingCampaignReportsTable")]
+    partial class AddingCampaignReportsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -278,62 +281,6 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasDatabaseName("ix_campaign_contributions_user_id");
 
                     b.ToTable("campaign_contributions", (string)null);
-                });
-
-            modelBuilder.Entity("DonateHope.Domain.Entities.CampaignLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid?>("CampaignId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("campaign_id");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("deleted_by");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<string>("ModifiedContents")
-                        .HasColumnType("text")
-                        .HasColumnName("modified_contents");
-
-                    b.Property<string>("ModifiedFields")
-                        .HasColumnType("text")
-                        .HasColumnName("modified_fields");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by");
-
-                    b.HasKey("Id")
-                        .HasName("pk_campaign_logs");
-
-                    b.HasIndex("CampaignId")
-                        .HasDatabaseName("ix_campaign_logs_campaign_id");
-
-                    b.ToTable("campaign_logs", (string)null);
                 });
 
             modelBuilder.Entity("DonateHope.Domain.Entities.CampaignRating", b =>
@@ -798,14 +745,6 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasConstraintName("fk_campaign_contributions_app_users_user_id");
                 });
 
-            modelBuilder.Entity("DonateHope.Domain.Entities.CampaignLog", b =>
-                {
-                    b.HasOne("DonateHope.Domain.Entities.Campaign", null)
-                        .WithMany("CampaignLogs")
-                        .HasForeignKey("CampaignId")
-                        .HasConstraintName("fk_campaign_logs_campaigns_campaign_id");
-                });
-
             modelBuilder.Entity("DonateHope.Domain.Entities.CampaignRating", b =>
                 {
                     b.HasOne("DonateHope.Domain.Entities.Campaign", null)
@@ -893,8 +832,6 @@ namespace DonateHope.Infrastructure.Migrations
                     b.Navigation("CampaignComments");
 
                     b.Navigation("CampaignContributions");
-
-                    b.Navigation("CampaignLogs");
 
                     b.Navigation("CampaignRatings");
 

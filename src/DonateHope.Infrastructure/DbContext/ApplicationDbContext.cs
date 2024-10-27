@@ -12,6 +12,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Campaign> Campaigns { get; set; }
     public DbSet<CampaignRating> CampaignRatings { get; set; }
     public DbSet<CampaignComment> CampaignComments { get; set; }
+    public DbSet<CampaignContribution> CampaignContributions { get; set; }
+    public DbSet<CampaignReport> CampaignReports { get; set; }
+    public DbSet<CampaignLog> CampaignLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,7 +71,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .Ignore(c => c.User)
             .Ignore(c => c.CampaignRatings)
             .Ignore(c => c.CampaignComments)
-            .Ignore(c => c.CampaignContributions);
+            .Ignore(c => c.CampaignContributions)
+            .Ignore(c => c.CampaignReports)
+            .Ignore(c => c.CampaignLogs);
 
         modelBuilder
             .Entity<Campaign>()
@@ -117,5 +122,23 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne<Campaign>()
             .WithMany(c => c.CampaignContributions)
             .HasForeignKey(cc => cc.CampaignId);
+
+        // campaign_reports table
+        modelBuilder.Entity<CampaignReport>().HasKey(cr => cr.Id);
+        modelBuilder.Entity<CampaignReport>().Ignore(cr => cr.Campaign);
+        modelBuilder
+            .Entity<CampaignReport>()
+            .HasOne<Campaign>()
+            .WithMany(c => c.CampaignReports)
+            .HasForeignKey(cr => cr.CampaignId);
+
+        // campaign_logs tables
+        modelBuilder.Entity<CampaignLog>().HasKey(cl => cl.Id);
+        modelBuilder.Entity<CampaignLog>().Ignore(cl => cl.Campaign);
+        modelBuilder
+            .Entity<CampaignLog>()
+            .HasOne<Campaign>()
+            .WithMany(c => c.CampaignLogs)
+            .HasForeignKey(cl => cl.CampaignId);
     }
 }

@@ -22,6 +22,7 @@ public class Campaign : ITraceable, IActiveStatus
     public double AverageRatingPoint { get; set; }
     public decimal SpendingAmount { get; set; }
     public string? ProofsUrl { get; set; }
+    public string? CampaignStatus { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? CreatedBy { get; set; }
@@ -36,4 +37,6 @@ public class Campaign : ITraceable, IActiveStatus
     public List<CampaignRating>? CampaignRatings { get; set; }
     public List<CampaignComment>? CampaignComments { get; set; }
     public List<CampaignContribution>? CampaignContributions { get; set; }
+    public List<CampaignReport>? CampaignReports { get; set; }
+    public List<CampaignLog>? CampaignLogs { get; set; }
 }
