@@ -11,6 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<Campaign> Campaigns { get; set; }
     public DbSet<CampaignRating> CampaignRatings { get; set; }
+    public DbSet<CampaignComment> CampaignComments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,11 +57,19 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder
             .Entity<AppUser>()
             .Ignore(user => user.CampaignRatings)
-            .Ignore(user => user.Campaigns);
+            .Ignore(user => user.Campaigns)
+            .Ignore(user => user.CampaignComments)
+            .Ignore(user => user.CampaignContributions);
 
         // campaigns table
         modelBuilder.Entity<Campaign>().HasKey(c => c.Id);
-        modelBuilder.Entity<Campaign>().Ignore(c => c.User).Ignore(c => c.CampaignRatings);
+        modelBuilder
+            .Entity<Campaign>()
+            .Ignore(c => c.User)
+            .Ignore(c => c.CampaignRatings)
+            .Ignore(c => c.CampaignComments)
+            .Ignore(c => c.CampaignContributions);
+
         modelBuilder
             .Entity<Campaign>()
             .HasOne<AppUser>()
@@ -80,5 +89,33 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne<Campaign>()
             .WithMany(c => c.CampaignRatings)
             .HasForeignKey(cr => cr.CampaignId);
+
+        // campaign_comments table
+        modelBuilder.Entity<CampaignComment>().HasKey(cc => cc.Id);
+        modelBuilder.Entity<CampaignComment>().Ignore(cc => cc.User).Ignore(cc => cc.Campaign);
+        modelBuilder
+            .Entity<CampaignComment>()
+            .HasOne<AppUser>()
+            .WithMany(user => user.CampaignComments)
+            .HasForeignKey(cc => cc.UserId);
+        modelBuilder
+            .Entity<CampaignComment>()
+            .HasOne<Campaign>()
+            .WithMany(c => c.CampaignComments)
+            .HasForeignKey(cc => cc.CampaignId);
+
+        // campaign_contributions table
+        modelBuilder.Entity<CampaignContribution>().HasKey(cc => cc.Id);
+        modelBuilder.Entity<CampaignContribution>().Ignore(cc => cc.User).Ignore(cc => cc.Campaign);
+        modelBuilder
+            .Entity<CampaignContribution>()
+            .HasOne<AppUser>()
+            .WithMany(user => user.CampaignContributions)
+            .HasForeignKey(cc => cc.UserId);
+        modelBuilder
+            .Entity<CampaignContribution>()
+            .HasOne<Campaign>()
+            .WithMany(c => c.CampaignContributions)
+            .HasForeignKey(cc => cc.CampaignId);
     }
 }

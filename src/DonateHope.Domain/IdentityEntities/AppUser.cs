@@ -24,4 +24,6 @@ public class AppUser : IdentityUser<Guid>, ITraceable, IActiveStatus, IBannedSta
     public string? BannedStatusNote { get; set; }
     public List<CampaignRating>? CampaignRatings { get; set; }
     public List<Campaign>? Campaigns { get; set; }
+    public List<CampaignComment>? CampaignComments { get; set; }
+    public List<CampaignContribution>? CampaignContributions { get; set; }
 }

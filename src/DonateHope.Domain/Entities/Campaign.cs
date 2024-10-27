@@ -34,4 +34,6 @@ public class Campaign : ITraceable, IActiveStatus
     public Guid UserId { get; set; }
     public AppUser? User { get; set; }
     public List<CampaignRating>? CampaignRatings { get; set; }
+    public List<CampaignComment>? CampaignComments { get; set; }
+    public List<CampaignContribution>? CampaignContributions { get; set; }
 }
