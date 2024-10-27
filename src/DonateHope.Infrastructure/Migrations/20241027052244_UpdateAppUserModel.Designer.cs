@@ -3,6 +3,7 @@ using System;
 using DonateHope.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DonateHope.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241027052244_UpdateAppUserModel")]
+    partial class UpdateAppUserModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,161 +24,6 @@ namespace DonateHope.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("DonateHope.Domain.Entities.Campaign", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<decimal>("AchievedAmount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("achieved_amount");
-
-                    b.Property<string>("ActiveStatusNote")
-                        .HasColumnType("text")
-                        .HasColumnName("active_status_note");
-
-                    b.Property<double>("AverageRatingPoint")
-                        .HasColumnType("double precision")
-                        .HasColumnName("average_rating_point");
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("created_by");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("deleted_by");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("end_date");
-
-                    b.Property<DateTime?>("ExpectingEndDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expecting_end_date");
-
-                    b.Property<DateTime?>("ExpectingStartDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expecting_start_date");
-
-                    b.Property<decimal>("GoalAmount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("goal_amount");
-
-                    b.Property<string>("GoalStatus")
-                        .HasColumnType("text")
-                        .HasColumnName("goal_status");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_active");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<int>("NumberOfRatings")
-                        .HasColumnType("integer")
-                        .HasColumnName("number_of_ratings");
-
-                    b.Property<string>("ProofsUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("proofs_url");
-
-                    b.Property<decimal>("SpendingAmount")
-                        .HasColumnType("numeric")
-                        .HasColumnName("spending_amount");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("start_date");
-
-                    b.Property<string>("Subtitle")
-                        .HasColumnType("text")
-                        .HasColumnName("subtitle");
-
-                    b.Property<string>("Summary")
-                        .HasColumnType("text")
-                        .HasColumnName("summary");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("text")
-                        .HasColumnName("title");
-
-                    b.Property<string>("UnitOfMeasurement")
-                        .HasColumnType("text")
-                        .HasColumnName("unit_of_measurement");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("updated_by");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_campaigns");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_campaigns_user_id");
-
-                    b.ToTable("campaigns", (string)null);
-                });
-
-            modelBuilder.Entity("DonateHope.Domain.Entities.CampaignRating", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("CampaignId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("campaign_id");
-
-                    b.Property<string>("Feedback")
-                        .HasColumnType("text")
-                        .HasColumnName("feedback");
-
-                    b.Property<double>("RatingPoint")
-                        .HasColumnType("double precision")
-                        .HasColumnName("rating_point");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_campaign_ratings");
-
-                    b.HasIndex("CampaignId")
-                        .HasDatabaseName("ix_campaign_ratings_campaign_id");
-
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_campaign_ratings_user_id");
-
-                    b.ToTable("campaign_ratings", (string)null);
-                });
 
             modelBuilder.Entity("DonateHope.Domain.IdentityEntities.AppRole", b =>
                 {
@@ -484,33 +332,6 @@ namespace DonateHope.Infrastructure.Migrations
                     b.ToTable("app_user_tokens", (string)null);
                 });
 
-            modelBuilder.Entity("DonateHope.Domain.Entities.Campaign", b =>
-                {
-                    b.HasOne("DonateHope.Domain.IdentityEntities.AppUser", null)
-                        .WithMany("Campaigns")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_campaigns_app_users_user_id");
-                });
-
-            modelBuilder.Entity("DonateHope.Domain.Entities.CampaignRating", b =>
-                {
-                    b.HasOne("DonateHope.Domain.Entities.Campaign", null)
-                        .WithMany("CampaignRatings")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_campaign_ratings_campaigns_campaign_id");
-
-                    b.HasOne("DonateHope.Domain.IdentityEntities.AppUser", null)
-                        .WithMany("CampaignRatings")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_campaign_ratings_app_users_user_id");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("DonateHope.Domain.IdentityEntities.AppRole", null)
@@ -566,18 +387,6 @@ namespace DonateHope.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_app_user_tokens_app_users_user_id");
-                });
-
-            modelBuilder.Entity("DonateHope.Domain.Entities.Campaign", b =>
-                {
-                    b.Navigation("CampaignRatings");
-                });
-
-            modelBuilder.Entity("DonateHope.Domain.IdentityEntities.AppUser", b =>
-                {
-                    b.Navigation("CampaignRatings");
-
-                    b.Navigation("Campaigns");
                 });
 #pragma warning restore 612, 618
         }

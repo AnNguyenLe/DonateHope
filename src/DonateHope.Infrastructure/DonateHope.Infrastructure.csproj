@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DonateHope.Domain\DonateHope.Domain.csproj" />
+    <ProjectReference Include="..\DonateHope.Core\DonateHope.Core.csproj" />
   </ItemGroup>
 
 </Project>
