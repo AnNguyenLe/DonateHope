@@ -15,6 +15,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<CampaignContribution> CampaignContributions { get; set; }
     public DbSet<CampaignReport> CampaignReports { get; set; }
     public DbSet<CampaignLog> CampaignLogs { get; set; }
+    public DbSet<CampaignStatus> CampaignStatuses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,13 +74,20 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .Ignore(c => c.CampaignComments)
             .Ignore(c => c.CampaignContributions)
             .Ignore(c => c.CampaignReports)
-            .Ignore(c => c.CampaignLogs);
+            .Ignore(c => c.CampaignLogs)
+            .Ignore(c => c.CampaignStatus);
 
         modelBuilder
             .Entity<Campaign>()
             .HasOne<AppUser>()
             .WithMany(u => u.Campaigns)
             .HasForeignKey(c => c.UserId);
+
+        modelBuilder
+            .Entity<Campaign>()
+            .HasOne<CampaignStatus>()
+            .WithOne(cs => cs.Campaign)
+            .HasForeignKey<Campaign>(c => c.CampaignStatusId);
 
         // campaign_ratings table
         modelBuilder.Entity<CampaignRating>().HasKey(r => r.Id);
@@ -132,7 +140,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany(c => c.CampaignReports)
             .HasForeignKey(cr => cr.CampaignId);
 
-        // campaign_logs tables
+        // campaign_logs table
         modelBuilder.Entity<CampaignLog>().HasKey(cl => cl.Id);
         modelBuilder.Entity<CampaignLog>().Ignore(cl => cl.Campaign);
         modelBuilder
@@ -140,5 +148,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne<Campaign>()
             .WithMany(c => c.CampaignLogs)
             .HasForeignKey(cl => cl.CampaignId);
+
+        // campaign_statuses table
+        modelBuilder.Entity<CampaignStatus>().HasKey(cs => cs.Id);
+        modelBuilder.Entity<CampaignStatus>().Ignore(cs => cs.Campaign);
     }
 }

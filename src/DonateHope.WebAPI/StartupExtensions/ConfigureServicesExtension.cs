@@ -165,6 +165,8 @@ public static class ConfigureServicesExtension
         services.Configure<SmtpConfiguration>(configuration.GetSection("SmtpSettings"));
         services.Configure<MyAppServerConfiguration>(configuration.GetSection("MyAppServer"));
 
+        services.AddHttpContextAccessor();
+
         return services;
     }
 }

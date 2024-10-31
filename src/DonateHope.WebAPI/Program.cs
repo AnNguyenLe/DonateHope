@@ -5,7 +5,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
 builder.Host.UseSerilog(
     (context, services, loggerConfiguration) =>
     {
@@ -17,7 +16,7 @@ builder.Host.UseSerilog(
 
 builder.Services.ConfigureServices(builder.Configuration);
 
-builder.Services.DependencyInjectionServices();
+builder.Services.DependencyInjectionServices(builder.Configuration);
 
 builder.Configuration.AddJsonFile("WeatherApiConfig.json", optional: true, reloadOnChange: true);
 

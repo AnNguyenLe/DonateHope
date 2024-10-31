@@ -3,6 +3,7 @@ using System;
 using DonateHope.Infrastructure.DbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DonateHope.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241031152244_AddingCampaignStatusesTable")]
+    partial class AddingCampaignStatusesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,6 +142,9 @@ namespace DonateHope.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_campaigns");
+
+                    b.HasIndex("CampaignStatusId")
+                        .HasDatabaseName("ix_campaigns_campaign_status_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_campaigns_user_id");
@@ -787,12 +793,21 @@ namespace DonateHope.Infrastructure.Migrations
 
             modelBuilder.Entity("DonateHope.Domain.Entities.Campaign", b =>
                 {
+                    b.HasOne("DonateHope.Domain.Entities.CampaignStatus", "CampaignStatus")
+                        .WithMany()
+                        .HasForeignKey("CampaignStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_campaigns_campaign_statuses_campaign_status_id");
+
                     b.HasOne("DonateHope.Domain.IdentityEntities.AppUser", null)
                         .WithMany("Campaigns")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_campaigns_app_users_user_id");
+
+                    b.Navigation("CampaignStatus");
                 });
 
             modelBuilder.Entity("DonateHope.Domain.Entities.CampaignComment", b =>
