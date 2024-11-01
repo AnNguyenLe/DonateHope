@@ -23,7 +23,6 @@ public class CampaignController(
     private readonly ICampaignCreatingService _campaignCreatingService = campaignCreatingService;
 
     [HttpPost]
-    [AllowAnonymous]
     [Route("create")]
     public async Task<ActionResult<string>> CreateCampaign(CampaignCreateRequestDto createRequest)
     {
