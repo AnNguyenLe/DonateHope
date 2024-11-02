@@ -1,5 +1,4 @@
-using System.Net.Mail;
-using DonateHope.Core.DTOs.CampaignDTOs;
+using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.Authentication;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Core.ServiceContracts.Email;
@@ -37,8 +36,9 @@ public static class DependencyInjectionServicesExtension
         ));
 
         services.TryAddSingleton<ICampaignsRepository, CampaignsRepository>();
-        services.AddScoped<ICampaignCreatingService, CampaignCreatingService>();
         services.TryAddSingleton<CampaignMapper>();
+        services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
+        services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
 
         return services;
     }

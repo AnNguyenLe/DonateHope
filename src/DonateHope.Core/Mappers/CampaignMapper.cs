@@ -1,7 +1,8 @@
+using DonateHope.Core.DTOs.CampaignDTOs;
 using DonateHope.Domain.Entities;
 using Riok.Mapperly.Abstractions;
 
-namespace DonateHope.Core.DTOs.CampaignDTOs;
+namespace DonateHope.Core.Mappers;
 
 [Mapper]
 public partial class CampaignMapper
@@ -31,5 +32,22 @@ public partial class CampaignMapper
     [MapperIgnoreTarget(nameof(Campaign.CampaignContributions))]
     [MapperIgnoreTarget(nameof(Campaign.CampaignLogs))]
     [MapperIgnoreTarget(nameof(Campaign.CampaignReports))]
+    [MapperIgnoreTarget(nameof(Campaign.CampaignStatusId))]
     public partial Campaign MapCampaignCreateRequestDtoToCampaign(CampaignCreateRequestDto dto);
+
+    [MapperIgnoreSource(nameof(Campaign.Id))]
+    [MapperIgnoreSource(nameof(Campaign.IsDeleted))]
+    [MapperIgnoreSource(nameof(Campaign.DeletedAt))]
+    [MapperIgnoreSource(nameof(Campaign.DeletedBy))]
+    [MapperIgnoreSource(nameof(Campaign.IsActive))]
+    [MapperIgnoreSource(nameof(Campaign.ActiveStatusNote))]
+    [MapperIgnoreSource(nameof(Campaign.UserId))]
+    [MapperIgnoreSource(nameof(Campaign.User))]
+    [MapperIgnoreSource(nameof(Campaign.CampaignRatings))]
+    [MapperIgnoreSource(nameof(Campaign.CampaignComments))]
+    [MapperIgnoreSource(nameof(Campaign.CampaignContributions))]
+    [MapperIgnoreSource(nameof(Campaign.CampaignLogs))]
+    [MapperIgnoreSource(nameof(Campaign.CampaignReports))]
+    [MapperIgnoreSource(nameof(Campaign.CampaignStatusId))]
+    public partial CampaignGetResponseDto MapCampaignToCampaignGetResponseDto(Campaign campaign);
 }

@@ -1,7 +1,9 @@
 using Dapper;
+using DonateHope.Core.Errors;
 using DonateHope.Domain.Entities;
 using DonateHope.Domain.RepositoryContracts;
 using DonateHope.Infrastructure.Data;
+using FluentResults;
 
 namespace DonateHope.Infrastructure.Repositories;
 
@@ -103,6 +105,37 @@ public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICa
     }
 
     public Task<IEnumerable<Campaign>> GetCampaigns(Func<Campaign, bool> predicate)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Result<Campaign>> GetCampaignById(Guid campaignId)
+    {
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+
+        var sqlCommand = """
+                SELECT *
+                FROM campaigns
+                WHERE 
+                    id = @campaignId
+                    AND is_deleted = false
+                LIMIT 1;
+            """;
+
+        var queryResult = await dbConnection.QueryFirstAsync<Campaign>(
+            sqlCommand,
+            new { campaignId }
+        );
+
+        if (queryResult is null)
+        {
+            return new ProblemDetailsError($"Campaign with ID: {campaignId} not found.");
+        }
+
+        return queryResult;
+    }
+
+    public Task<int> ModifyCampaign(Guid campaignId, Campaign updatedCampaign)
     {
         throw new NotImplementedException();
     }

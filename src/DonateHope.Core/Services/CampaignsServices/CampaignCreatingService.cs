@@ -1,6 +1,8 @@
 using DonateHope.Core.DTOs.CampaignDTOs;
 using DonateHope.Core.Errors;
+using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
+using DonateHope.Domain.Entities;
 using DonateHope.Domain.EntityExtensions;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
@@ -15,7 +17,7 @@ public class CampaignCreatingService(
     private readonly ICampaignsRepository _campaignsRepository = campaignsRepository;
     private readonly CampaignMapper _campaignMapper = campaignMapper;
 
-    public async Task<Result<Guid>> CreateCampaignAsync(
+    public async Task<Result<Campaign>> CreateCampaignAsync(
         CampaignCreateRequestDto campaignCreateRequestDto,
         string userId
     )
@@ -29,6 +31,6 @@ public class CampaignCreatingService(
         {
             return new ProblemDetailsError("Failed to create campaign");
         }
-        return campaign.Id;
+        return campaign;
     }
 }

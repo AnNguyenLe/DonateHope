@@ -125,8 +125,8 @@ public class AuthenticationService(
 
         return new AuthenticationResponse
         {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            FirstName = user.FirstName ?? "Unknown Firstname",
+            LastName = user.LastName ?? "Unknown Lastname",
             Email = user.Email!,
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
@@ -162,8 +162,8 @@ public class AuthenticationService(
 
         return new AuthenticationResponse()
         {
-            FirstName = user.FirstName,
-            LastName = user.LastName,
+            FirstName = user.FirstName ?? "Unknown Firstname",
+            LastName = user.LastName ?? "Unknown Lastname",
             Email = request.Email,
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
