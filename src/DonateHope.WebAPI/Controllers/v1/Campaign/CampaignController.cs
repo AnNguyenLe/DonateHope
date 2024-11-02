@@ -28,7 +28,7 @@ public class CampaignController(
     private readonly ICampaignCreatingService _campaignCreatingService = campaignCreatingService;
     private readonly ICampaignRetrievalService _campaignRetrievalService = campaignRetrievalService;
 
-    [HttpPost("create", Name = "CreateCampaign")]
+    [HttpPost("create", Name = nameof(CreateCampaign))]
     public async Task<ActionResult<string>> CreateCampaign(
         [FromBody] CampaignCreateRequestDto createRequest
     )

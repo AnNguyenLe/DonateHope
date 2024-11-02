@@ -119,10 +119,9 @@ public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICa
                 WHERE 
                     id = @campaignId
                     AND is_deleted = false
-                LIMIT 1;
             """;
 
-        var queryResult = await dbConnection.QueryFirstAsync<Campaign>(
+        var queryResult = await dbConnection.QueryFirstOrDefaultAsync<Campaign>(
             sqlCommand,
             new { campaignId }
         );
