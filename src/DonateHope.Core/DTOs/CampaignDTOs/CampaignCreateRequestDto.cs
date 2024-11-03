@@ -11,4 +11,5 @@ public class CampaignCreateRequestDto
     public DateTime? ExpectingStartDate { get; init; }
     public DateTime? ExpectingEndDate { get; init; }
     public string? ProofsUrl { get; init; }
+    public bool IsPublished { get; init; }
 }

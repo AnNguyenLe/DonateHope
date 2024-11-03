@@ -1,17 +1,25 @@
+using System.Linq.Expressions;
+using System.Text.Json;
 using Dapper;
 using DonateHope.Core.Errors;
 using DonateHope.Domain.Entities;
 using DonateHope.Domain.RepositoryContracts;
 using DonateHope.Infrastructure.Data;
+using DonateHope.Infrastructure.DbContext;
 using FluentResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace DonateHope.Infrastructure.Repositories;
 
-public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICampaignsRepository
+public class CampaignsRepository(
+    IDbConnectionFactory dbConnectionFactory,
+    ApplicationDbContext applicationDbContext
+) : ICampaignsRepository
 {
     private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
+    private readonly ApplicationDbContext _dbContext = applicationDbContext;
 
-    public async Task<int> AddCampaign(Campaign campaign)
+    public async Task<Result<int>> AddCampaign(Campaign campaign)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var sqlCommand = """
@@ -31,6 +39,8 @@ public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICa
                         number_of_ratings,
                         average_rating_point,
                         spending_amount,
+                        proofs_url,
+                        is_published,
                         created_at, 
                         updated_at,
                         created_by, 
@@ -55,6 +65,8 @@ public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICa
                         @NumberOfRatings,
                         @AverageRatingPoint,
                         @SpendingAmount,
+                        @ProofsUrl,
+                        @IsPublished,
                         @CreatedAt,
                         @UpdatedAt,
                         @CreatedBy,
@@ -65,20 +77,27 @@ public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICa
                     );
             """;
 
-        // TODO: Update campaign_log also
-        return await dbConnection.ExecuteAsync(sqlCommand, campaign);
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, campaign);
+
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Add new campaign failed.");
+        }
+
+        return totalAffectedRows;
     }
 
-    public async Task<int> DeleteCampaign(Guid campaignId)
+    public async Task<Result<int>> DeleteCampaign(
+        Guid campaignId,
+        Guid deletedBy,
+        string reasonForDeletion
+    )
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
 
         var sqlCommand = """
                 UPDATE campaigns
                 SET
-                    end_date = @endDate,
-                    updated_at = @updatedAt,
-                    updated_by = @updatedBy,
                     is_deleted = @isDeleted,
                     deleted_at = @deletedAt,
                     deleted_by = @deletedBy,
@@ -87,44 +106,61 @@ public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICa
                 WHERE id = @campaignId
             """;
 
-        // TODO: Update campaign_log also
-        return await dbConnection.ExecuteAsync(
+        var totalAffectedRows = await dbConnection.ExecuteAsync(
             sqlCommand,
-            new { endDate = DateTime.UtcNow, updatedAt = DateTime.UtcNow, }
+            new
+            {
+                isDeleted = true,
+                deletedAt = DateTime.UtcNow,
+                deletedBy,
+                isActive = false,
+                activeStatusNote = reasonForDeletion,
+                campaignId
+            }
         );
+
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Something wrong trying to delete this record.");
+        }
+
+        return totalAffectedRows;
     }
 
-    public Task<int> DeleteCampaignPermanently(Guid campaignId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<Campaign>> GetCampaigns()
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<Campaign>> GetCampaigns(Func<Campaign, bool> predicate)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<Result<Campaign>> GetCampaignById(Guid campaignId)
+    /// <summary>
+    /// USING THIS WITH CAUTION! Your data will be deleted permanently and will not be able to recoveredz!
+    /// </summary>
+    public async Task<Result<int>> DeleteCampaignPermanently(Guid campaignId)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
 
         var sqlCommand = """
-                SELECT *
-                FROM campaigns
-                WHERE 
-                    id = @campaignId
-                    AND is_deleted = false
+                DELETE campaigns
+                WHERE id = @campaignId;
             """;
 
-        var queryResult = await dbConnection.QueryFirstOrDefaultAsync<Campaign>(
-            sqlCommand,
-            new { campaignId }
-        );
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, new { campaignId });
+
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError(
+                $"Unable to permanently delete campaign with ID: {campaignId}"
+            );
+        }
+
+        return totalAffectedRows;
+    }
+
+    public IQueryable<Campaign> GetCampaigns(Expression<Func<Campaign, bool>> predicate)
+    {
+        return _dbContext.Campaigns.Where(predicate);
+    }
+
+    public async Task<Result<Campaign>> GetCampaignById(Guid campaignId)
+    {
+        var queryResult = await _dbContext
+            .Campaigns.Where(c => c.Id == campaignId)
+            .FirstOrDefaultAsync();
 
         if (queryResult is null)
         {
@@ -134,8 +170,35 @@ public class CampaignsRepository(IDbConnectionFactory dbConnectionFactory) : ICa
         return queryResult;
     }
 
-    public Task<int> ModifyCampaign(Guid campaignId, Campaign updatedCampaign)
+    public async Task<Result<int>> UpdateCampaign(Campaign updatedCampaign)
     {
-        throw new NotImplementedException();
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+
+        var sqlCommand = """
+                UPDATE campaigns
+                SET
+                    title = @Title, 
+                    subtitle = @Subtitle, 
+                    summary = @Summary,
+                    description = @Description, 
+                    goal_amount = @GoalAmount,
+                    unit_of_measurement = @UnitOfMeasurement,
+                    expecting_start_date = @ExpectingStartDate,
+                    expecting_end_date = @ExpectingEndDate,
+                    proofs_url = @ProofsUrl,
+                    updated_at = @UpdatedAt,
+                    updated_by = @UpdatedBy
+                WHERE
+                    id = @Id;
+            """;
+
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, updatedCampaign);
+
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Unable to update the campaign.");
+        }
+
+        return totalAffectedRows;
     }
 }

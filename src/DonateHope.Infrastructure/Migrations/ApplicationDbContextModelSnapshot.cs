@@ -24,7 +24,7 @@ namespace DonateHope.Infrastructure.Migrations
 
             modelBuilder.Entity("DonateHope.Domain.Entities.Campaign", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -41,8 +41,8 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("double precision")
                         .HasColumnName("average_rating_point");
 
-                    b.Property<int>("CampaignStatusId")
-                        .HasColumnType("integer")
+                    b.Property<Guid?>("CampaignStatusId")
+                        .HasColumnType("uuid")
                         .HasColumnName("campaign_status_id");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -93,6 +93,10 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_published");
+
                     b.Property<int>("NumberOfRatings")
                         .HasColumnType("integer")
                         .HasColumnName("number_of_ratings");
@@ -100,6 +104,10 @@ namespace DonateHope.Infrastructure.Migrations
                     b.Property<string>("ProofsUrl")
                         .HasColumnType("text")
                         .HasColumnName("proofs_url");
+
+                    b.Property<string>("ReasonForDeletion")
+                        .HasColumnType("text")
+                        .HasColumnName("reason_for_deletion");
 
                     b.Property<decimal>("SpendingAmount")
                         .HasColumnType("numeric")
@@ -139,6 +147,9 @@ namespace DonateHope.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_campaigns");
+
+                    b.HasIndex("CampaignStatusId")
+                        .HasDatabaseName("ix_campaigns_campaign_status_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_campaigns_user_id");
@@ -189,6 +200,10 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<string>("ReasonForDeletion")
+                        .HasColumnType("text")
+                        .HasColumnName("reason_for_deletion");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
@@ -228,9 +243,9 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("campaign_id");
 
-                    b.Property<string>("ContributiongMethod")
+                    b.Property<string>("ContributionMethod")
                         .HasColumnType("text")
-                        .HasColumnName("contributiong_method");
+                        .HasColumnName("contribution_method");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -251,6 +266,10 @@ namespace DonateHope.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<string>("ReasonForDeletion")
+                        .HasColumnType("text")
+                        .HasColumnName("reason_for_deletion");
 
                     b.Property<string>("UnitOfMeasurement")
                         .HasColumnType("text")
@@ -318,6 +337,10 @@ namespace DonateHope.Infrastructure.Migrations
                     b.Property<string>("ModifiedFields")
                         .HasColumnType("text")
                         .HasColumnName("modified_fields");
+
+                    b.Property<string>("ReasonForDeletion")
+                        .HasColumnType("text")
+                        .HasColumnName("reason_for_deletion");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -418,6 +441,10 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<string>("ReasonForDeletion")
+                        .HasColumnType("text")
+                        .HasColumnName("reason_for_deletion");
+
                     b.Property<string>("Subtitle")
                         .HasColumnType("text")
                         .HasColumnName("subtitle");
@@ -457,12 +484,10 @@ namespace DonateHope.Infrastructure.Migrations
 
             modelBuilder.Entity("DonateHope.Domain.Entities.CampaignStatus", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .HasColumnType("text")
@@ -612,6 +637,10 @@ namespace DonateHope.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("boolean")
                         .HasColumnName("phone_number_confirmed");
+
+                    b.Property<string>("ReasonForDeletion")
+                        .HasColumnType("text")
+                        .HasColumnName("reason_for_deletion");
 
                     b.Property<DateTime?>("RefreshTokenExpiryDateTime")
                         .HasColumnType("timestamp with time zone")
@@ -787,6 +816,11 @@ namespace DonateHope.Infrastructure.Migrations
 
             modelBuilder.Entity("DonateHope.Domain.Entities.Campaign", b =>
                 {
+                    b.HasOne("DonateHope.Domain.Entities.CampaignStatus", null)
+                        .WithMany("Campaigns")
+                        .HasForeignKey("CampaignStatusId")
+                        .HasConstraintName("fk_campaigns_campaign_statuses_campaign_status_id");
+
                     b.HasOne("DonateHope.Domain.IdentityEntities.AppUser", null)
                         .WithMany("Campaigns")
                         .HasForeignKey("UserId")
@@ -922,6 +956,11 @@ namespace DonateHope.Infrastructure.Migrations
                     b.Navigation("CampaignRatings");
 
                     b.Navigation("CampaignReports");
+                });
+
+            modelBuilder.Entity("DonateHope.Domain.Entities.CampaignStatus", b =>
+                {
+                    b.Navigation("Campaigns");
                 });
 
             modelBuilder.Entity("DonateHope.Domain.IdentityEntities.AppUser", b =>

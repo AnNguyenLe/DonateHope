@@ -35,10 +35,11 @@ public static class DependencyInjectionServicesExtension
             configuration.GetConnectionString("Default")!
         ));
 
-        services.TryAddSingleton<ICampaignsRepository, CampaignsRepository>();
+        services.TryAddScoped<ICampaignsRepository, CampaignsRepository>();
         services.TryAddSingleton<CampaignMapper>();
         services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
         services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
+        services.TryAddScoped<ICampaignUpdatingService, CampaignUpdatingService>();
 
         return services;
     }
