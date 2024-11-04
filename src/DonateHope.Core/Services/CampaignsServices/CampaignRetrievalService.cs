@@ -15,14 +15,11 @@ public class CampaignRetrievalService(
     private readonly ICampaignsRepository _campaignsRepository = campaignsRepository;
     private readonly CampaignMapper _campaignMapper = campaignMapper;
 
-    public async Task<Result<CampaignGetResponseDto>> GetCampaignById(string campaignId)
+    public async Task<Result<CampaignGetResponseDto>> GetCampaignByIdAsync(Guid campaignId)
     {
-        if (!Guid.TryParse(campaignId, out var parsedCampaignId))
-        {
-            return new ProblemDetailsError("Invalid ID format");
-        }
+        
 
-        var campaignResult = await _campaignsRepository.GetCampaignById(parsedCampaignId);
+        var campaignResult = await _campaignsRepository.GetCampaignById(campaignId);
         if (campaignResult.IsFailed)
         {
             return new ProblemDetailsError(campaignResult.Errors.First().Message);

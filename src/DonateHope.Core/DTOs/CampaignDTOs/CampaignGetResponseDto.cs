@@ -4,6 +4,7 @@ namespace DonateHope.Core.DTOs.CampaignDTOs;
 
 public class CampaignGetResponseDto
 {
+    public Guid Id { get; set; }
     public string? Title { get; set; }
     public string? Subtitle { get; set; }
     public string? Summary { get; set; }

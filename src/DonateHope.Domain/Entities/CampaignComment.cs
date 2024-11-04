@@ -14,6 +14,7 @@ public class CampaignComment : ITraceable, IBannedStatus
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
+    public string? ReasonForDeletion { get; set; }
     public bool IsBanned { get; set; }
     public string? BannedStatusNote { get; set; }
     public Guid? UserId { get; set; }

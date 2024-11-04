@@ -41,6 +41,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddSingleton<CampaignMapper>();
         services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
         services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
+        services.TryAddScoped<ICampaignUpdatingService, CampaignUpdatingService>();
         
         services.TryAddSingleton<ICampaignContributionsRepository, CampaignContributionsesRepository>();
         services.TryAddScoped<CampaignContributionMapper>();

@@ -17,20 +17,28 @@ public class CampaignCreatingService(
     private readonly ICampaignsRepository _campaignsRepository = campaignsRepository;
     private readonly CampaignMapper _campaignMapper = campaignMapper;
 
-    public async Task<Result<Campaign>> CreateCampaignAsync(
+    public async Task<Result<CampaignGetResponseDto>> CreateCampaignAsync(
         CampaignCreateRequestDto campaignCreateRequestDto,
-        string userId
+        Guid userId
     )
     {
         var campaign = _campaignMapper
             .MapCampaignCreateRequestDtoToCampaign(campaignCreateRequestDto)
-            .OnNewCampaignCreating(Guid.Parse(userId));
+            .OnCampaignCreating(userId);
 
-        var affectedRows = await _campaignsRepository.AddCampaign(campaign);
-        if (affectedRows == 0)
+        var queryResult = await _campaignsRepository.AddCampaign(campaign);
+        if (queryResult.IsFailed)
+        {
+            return new ProblemDetailsError(
+                "Unexpected error(s) during the campaign creating process. Please contact support team."
+            );
+        }
+
+        var totalAffectedRows = queryResult.ValueOrDefault;
+        if (totalAffectedRows == 0)
         {
             return new ProblemDetailsError("Failed to create campaign");
         }
-        return campaign;
+        return _campaignMapper.MapCampaignToCampaignGetResponseDto(campaign);
     }
 }

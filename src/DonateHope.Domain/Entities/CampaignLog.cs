@@ -14,6 +14,7 @@ public class CampaignLog : ITraceable
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
+    public string? ReasonForDeletion { get; set; }
     public Guid? CampaignId { get; set; }
     public Campaign? Campaign { get; set; }
 }

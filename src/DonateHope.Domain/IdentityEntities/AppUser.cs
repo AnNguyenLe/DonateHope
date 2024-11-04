@@ -18,6 +18,7 @@ public class AppUser : IdentityUser<Guid>, ITraceable, IActiveStatus, IBannedSta
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
+    public string? ReasonForDeletion { get; set; }
     public bool IsActive { get; set; }
     public string? ActiveStatusNote { get; set; }
     public bool IsBanned { get; set; }
