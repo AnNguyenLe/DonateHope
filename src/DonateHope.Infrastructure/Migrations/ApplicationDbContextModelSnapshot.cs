@@ -24,7 +24,7 @@ namespace DonateHope.Infrastructure.Migrations
 
             modelBuilder.Entity("DonateHope.Domain.Entities.Campaign", b =>
                 {
-                    b.Property<Guid?>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -228,9 +228,9 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("campaign_id");
 
-                    b.Property<string>("ContributiongMethod")
+                    b.Property<string>("ContributionMethod")
                         .HasColumnType("text")
-                        .HasColumnName("contributiong_method");
+                        .HasColumnName("contribution_method");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
