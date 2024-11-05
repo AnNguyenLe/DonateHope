@@ -1,4 +1,4 @@
-using DonateHope.Core.DTOs.CampaignDTOs;
+using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Domain.Entities;
 using Riok.Mapperly.Abstractions;
 
@@ -19,7 +19,6 @@ public partial class CampaignContributionMapper
     [MapperIgnoreTarget(nameof(CampaignContribution.DeletedBy))]
     public partial CampaignContribution MapCampaignContributionCreateRequestDtoToCampaignContribution(CampaignContributionCreateRequestDto campaignContributionCreateRequestDto);
     
-    [MapperIgnoreSource(nameof(CampaignContribution.Id))]
     [MapperIgnoreSource(nameof(CampaignContribution.IsDeleted))]
     [MapperIgnoreSource(nameof(CampaignContribution.DeletedAt))]
     [MapperIgnoreSource(nameof(CampaignContribution.DeletedBy))]

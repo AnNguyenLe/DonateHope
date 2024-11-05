@@ -1,4 +1,4 @@
-namespace DonateHope.Core.DTOs.CampaignDTOs;
+namespace DonateHope.Core.DTOs.CampaignContributionDTOs;
 
 public class CampaignContributionCreateRequestDto
 {

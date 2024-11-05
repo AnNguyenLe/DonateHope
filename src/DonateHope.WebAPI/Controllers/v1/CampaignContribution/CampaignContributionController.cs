@@ -1,7 +1,7 @@
 using Asp.Versioning;
 using DonateHope.Core.Common.ExtensionMethods;
 using DonateHope.Core.ConfigurationOptions.AppServer;
-using DonateHope.Core.DTOs.CampaignDTOs;
+using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
 using DonateHope.Domain.IdentityEntities;
@@ -54,7 +54,7 @@ public class CampaignContributionController(
     }
 
     [HttpGet("{id}", Name = nameof(GetCampaignContribution))]
-    public async Task<ActionResult<CampaignContributionGetResponseDto>> GetCampaignContribution([FromRoute] string id)
+    public async Task<ActionResult<CampaignContributionGetResponseDto>> GetCampaignContribution([FromRoute] Guid id)
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null)

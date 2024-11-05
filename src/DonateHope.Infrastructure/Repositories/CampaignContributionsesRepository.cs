@@ -1,17 +1,23 @@
 using System.Data;
+using System.Linq.Expressions;
 using Dapper;
 using DonateHope.Core.Errors;
 using DonateHope.Domain.Entities;
 using DonateHope.Domain.RepositoryContracts;
 using DonateHope.Infrastructure.Data;
+using DonateHope.Infrastructure.DbContext;
 using FluentResults;
+using Microsoft.EntityFrameworkCore;
 
 namespace DonateHope.Infrastructure.Repositories;
 
-public class CampaignContributionsesRepository(IDbConnectionFactory dbConnectionFactory) : ICampaignContributionsRepository
+public class CampaignContributionsesRepository(
+    IDbConnectionFactory dbConnectionFactory,
+    ApplicationDbContext applicationDbContext
+    ) : ICampaignContributionsRepository
 {
     private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
-
+    private readonly ApplicationDbContext _dbContext = applicationDbContext;
     public async Task<int> AddCampaignContribution(CampaignContribution campaignContribution)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
@@ -72,34 +78,22 @@ public class CampaignContributionsesRepository(IDbConnectionFactory dbConnection
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<CampaignContribution>> GetCampaignContributions()
+    public IQueryable<CampaignContribution> GetCampaignContributions(Expression<Func<CampaignContribution, bool>> predicate)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<IEnumerable<CampaignContribution>> GetCampaignContributions(Func<CampaignContribution, bool> predicate)
-    {
-        throw new NotImplementedException();
+        return _dbContext.CampaignContributions.Where(predicate);
     }
 
     public async Task<Result<CampaignContribution>> GetCampaignContributionById(Guid campaignContributionId)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
-        var sqlCommand = """
-                         SELECT *
-                         FROM campaign_contributions
-                         WHERE
-                            id = @campaignContributionId
-                            AND is_deleted = false
-                         """;
-        var queryResult = await dbConnection.QueryFirstOrDefaultAsync<CampaignContribution>(
-            sqlCommand,
-            new { campaignContributionId }
-            );
+        var queryResult = await _dbContext
+            .CampaignContributions.Where(cc => cc.Id == campaignContributionId)
+            .FirstOrDefaultAsync();
         if (queryResult is null)
         {
             return new ProblemDetailsError($"CampaignContribution with ID: {campaignContributionId} not found.");
         }
+
         return queryResult;
     }
 

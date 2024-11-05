@@ -1,8 +1,7 @@
-using DonateHope.Core.DTOs.CampaignDTOs;
+using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.Errors;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
-using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
 
@@ -16,14 +15,10 @@ public class CampaignContributionRetrievalService(
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
 
-    public async Task<Result<CampaignContributionGetResponseDto>> GetCampaignContributionByIdAsync(string campaignContributionId)
+    public async Task<Result<CampaignContributionGetResponseDto>> GetCampaignContributionByIdAsync(Guid campaignContributionId)
     {
-        if (!Guid.TryParse(campaignContributionId, out var parsedCampaignContributionId))
-        {
-            return new ProblemDetailsError("Invalid ID format");
-        }
-        
-        var campaignContributionResult = await _campaignContributionsRepository.GetCampaignContributionById(parsedCampaignContributionId);
+      
+        var campaignContributionResult = await _campaignContributionsRepository.GetCampaignContributionById(campaignContributionId);
         if (campaignContributionResult.IsFailed)
         {
             return new ProblemDetailsError(campaignContributionResult.Errors.First().Message);

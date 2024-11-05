@@ -1,4 +1,4 @@
-using DonateHope.Core.DTOs.CampaignDTOs;
+using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.Errors;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
