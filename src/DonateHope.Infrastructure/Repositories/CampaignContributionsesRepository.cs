@@ -54,28 +54,55 @@ public class CampaignContributionsesRepository(
         return await dbConnection.ExecuteAsync(sqlCommand, campaignContribution);
     }
 
-    public async Task<int> DeleteCampaignContribution(Guid campaignContributionId)
+    public async Task<Result<int>> DeleteCampaignContribution(
+        Guid campaignContributionId,
+        Guid deletedBy,
+        string reasonForDeletion
+        )
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var sqlCommand = """
                          UPDATE campaign_contributions
                          SET
-                            end_date = @endDate;
-                            updated_at = @updatedAt;
-                            updated_by = @updatedBy;
                             is_deleted = @isDeleted;
                             deleted_at = @deletedAt;
                             deleted_by = @deletedBy;
                          WHERE id = @campaignContributionId
                          """;
-        return await dbConnection.ExecuteAsync(
+        var totalAffectedRows = await dbConnection.ExecuteAsync(
             sqlCommand,
-            new { endDate = DateTime.UtcNow, updated_at = DateTime.UtcNow});
+            new
+            {
+                isDeleted = true,
+                deletedAt = DateTime.UtcNow,
+                deletedBy
+            });
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Something wrong trying to delete this record.");
+        }
+
+        return totalAffectedRows;
     }
     
-    public Task<int> DeleteCampaignContributionPermanently(Guid campaignContributionId)
+    /// <summary>
+    /// USING THIS WITH CAUTION! Your data will be deleted permanently and will not be able to recoveredz!
+    /// </summary>
+    public async Task<Result<int>> DeleteCampaignContributionPermanently(Guid campaignContributionId)
     {
-        throw new NotImplementedException();
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+        var sqlCommand = """
+                         DELETE campaign_contributions
+                         WHERE id = @campaignContributionId;
+                         """;
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, new { campaignContributionId });
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError(
+                $"Unable to permanently delete campaign_contribution with ID: {campaignContributionId}"
+            );
+        }
+        return totalAffectedRows;
     }
 
     public IQueryable<CampaignContribution> GetCampaignContributions(Expression<Func<CampaignContribution, bool>> predicate)
@@ -97,9 +124,26 @@ public class CampaignContributionsesRepository(
         return queryResult;
     }
 
-    public Task<int> ModifyCampaignContribution(Guid campaignContributionId,
-        CampaignContribution updateCampaignContribution)
+    public async Task<Result<int>> UpdateCampaignContribution(CampaignContribution updateCampaignContribution)
     {
-        throw new NotImplementedException();
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+        var sqlCommand = """
+                         UPDATE campaign_contributions
+                         SET
+                             amount = @Amount,
+                             unit_of_measurement = @UnitOfMeasurement,
+                             contribution_method = @ContributionMethod,
+                             campaign_id = @CampaignId,
+                             updated_at = @UpdatedAt,
+                             updated_by = @UpdatedBy
+                         WHERE 
+                             id = @Id;
+                         """;
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, updateCampaignContribution);
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Unable to update campaign_contribution.");
+        }
+        return totalAffectedRows;
     }
 }

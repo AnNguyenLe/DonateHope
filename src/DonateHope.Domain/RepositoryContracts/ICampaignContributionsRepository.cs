@@ -9,7 +9,7 @@ public interface ICampaignContributionsRepository
     Task<int> AddCampaignContribution(CampaignContribution campaignContribution);
     Task<Result<CampaignContribution>> GetCampaignContributionById(Guid campaignContributionId); 
     IQueryable<CampaignContribution> GetCampaignContributions(Expression<Func<CampaignContribution, bool>> predicate);
-    Task<int> ModifyCampaignContribution(Guid campaignContributionId, CampaignContribution updateCampaignContribution);
-    Task<int> DeleteCampaignContribution(Guid campaignContributionId);
-    Task<int> DeleteCampaignContributionPermanently(Guid campaignContributionId);
+    Task<Result<int>> UpdateCampaignContribution(CampaignContribution updateCampaignContribution);
+    Task<Result<int>> DeleteCampaignContribution(Guid campaignContributionId, Guid deletedBy, string reasonForDeletion);
+    Task<Result<int>> DeleteCampaignContributionPermanently(Guid campaignContributionId);
 }
