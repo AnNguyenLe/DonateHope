@@ -4,7 +4,7 @@ namespace DonateHope.Domain.EntityExtensions;
 
 public static class CampaignContributionExtensions
 {
-    public static CampaignContribution OnNewCampaignContributionCreating(this CampaignContribution campaignContribution, Guid ownerId)
+    public static CampaignContribution OnCampaignContributionCreating(this CampaignContribution campaignContribution, Guid ownerId)
     {
         var now = DateTime.UtcNow;
         campaignContribution.Id = Guid.NewGuid();

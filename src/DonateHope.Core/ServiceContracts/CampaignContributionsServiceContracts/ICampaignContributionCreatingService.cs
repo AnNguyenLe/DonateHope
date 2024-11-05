@@ -6,8 +6,8 @@ namespace DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts
 
 public interface ICampaignContributionCreatingService
 {
-    Task<Result<CampaignContribution>> CreateCampaignContributionAsync(
+    Task<Result<CampaignContributionGetResponseDto>> CreateCampaignContributionAsync(
         CampaignContributionCreateRequestDto campaignContributionCreateRequestDto,
-        string userId
+        Guid userId
         );
 }

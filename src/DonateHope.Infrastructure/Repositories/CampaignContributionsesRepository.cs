@@ -18,7 +18,7 @@ public class CampaignContributionsesRepository(
 {
     private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
     private readonly ApplicationDbContext _dbContext = applicationDbContext;
-    public async Task<int> AddCampaignContribution(CampaignContribution campaignContribution)
+    public async Task<Result<int>> AddCampaignContribution(CampaignContribution campaignContribution)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var sqlCommand = """
@@ -51,7 +51,13 @@ public class CampaignContributionsesRepository(
                                 @CampaignId
                              )
                          """;
-        return await dbConnection.ExecuteAsync(sqlCommand, campaignContribution);
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, campaignContribution);
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Failed to add campaign contribution.");
+        }
+        
+        return totalAffectedRows;
     }
 
     public async Task<Result<int>> DeleteCampaignContribution(
@@ -86,7 +92,7 @@ public class CampaignContributionsesRepository(
     }
     
     /// <summary>
-    /// USING THIS WITH CAUTION! Your data will be deleted permanently and will not be able to recoveredz!
+    /// USING THIS WITH CAUTION! Your data will be deleted permanently and will not be able to recovered!
     /// </summary>
     public async Task<Result<int>> DeleteCampaignContributionPermanently(Guid campaignContributionId)
     {

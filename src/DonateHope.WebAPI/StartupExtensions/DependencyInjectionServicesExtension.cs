@@ -47,7 +47,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddSingleton<CampaignContributionMapper>();
         services.TryAddScoped<ICampaignContributionCreatingService, CampaignContributionCreatingService>();
         services.TryAddScoped<ICampaignContributionRetrievalService, CampaignContributionRetrievalService>();
-
+        services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
         return services;
     }
 }

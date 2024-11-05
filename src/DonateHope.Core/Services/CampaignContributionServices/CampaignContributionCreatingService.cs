@@ -18,20 +18,31 @@ public class CampaignContributionCreatingService(
         _campaignContributionsRepository = campaignContributionsRepository;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
 
-    public async Task<Result<CampaignContribution>> CreateCampaignContributionAsync(
+    public async Task<Result<CampaignContributionGetResponseDto>> CreateCampaignContributionAsync(
         CampaignContributionCreateRequestDto campaignContributionCreateRequestDto,
-        string userId
+        Guid userId
     )
     {
         var campaignContribution = _campaignContributionMapper
             .MapCampaignContributionCreateRequestDtoToCampaignContribution(campaignContributionCreateRequestDto)
-            .OnNewCampaignContributionCreating(Guid.Parse(userId));
+            .OnCampaignContributionCreating(userId);
         
-        var affectedRows = await _campaignContributionsRepository.AddCampaignContribution(campaignContribution);
-        if (affectedRows == 0)
+        var queryResult = await _campaignContributionsRepository.AddCampaignContribution(campaignContribution);
+        if (queryResult.IsFailed)
         {
-            return new ProblemDetailsError("Failed to create campaign contribution");
+            return new ProblemDetailsError(
+                "Unexpected error(s) during the campaign contribution creating process. Please contact support team."
+            );
         }
-        return campaignContribution;
+        
+        var totalAffectedRows = queryResult.ValueOrDefault;
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Failed to create campaign contribution.");
+        }
+        
+        var mappedDto = _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(campaignContribution);
+        
+        return mappedDto;
     }
 }

@@ -17,27 +17,38 @@ namespace DonateHope.WebAPI.Controllers.v1.CampaignContribution;
 public class CampaignContributionController(
     ICampaignContributionCreatingService campaignContributionCreatingService,
     ICampaignContributionRetrievalService campaignContributionRetrievalService,
+    ICampaignContributionUpdatingService campaignContributionUpdatingService,
     UserManager<AppUser> userManager,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
     CampaignContributionMapper campaignContributionMapper
-    ) : ControllerBase
+    ) : CustomControllerBase
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
     private readonly MyAppServerConfiguration _app = myAppServerConfiguration.Value;
     private readonly ICampaignContributionCreatingService _campaignContributionCreatingService = campaignContributionCreatingService;
     private readonly ICampaignContributionRetrievalService _campaignContributionRetrievalService = campaignContributionRetrievalService;
+    private readonly ICampaignContributionUpdatingService _campaignContributionUpdatingService = campaignContributionUpdatingService;
 
     [HttpPost("create", Name = nameof(CreateCampaignContribution))]
-    public async Task<ActionResult<string>> CreateCampaignContribution(
+    public async Task<ActionResult<CampaignContributionGetResponseDto>> CreateCampaignContribution(
         [FromBody] CampaignContributionCreateRequestDto createRequest)
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null)
         {
-            return Problem("Unable to identify user");
+            return BadRequestProblemDetails("Unable to identify user");
         }
-        var result = await _campaignContributionCreatingService.CreateCampaignContributionAsync(createRequest, userId);
+
+        if (!Guid.TryParse(userId, out var parsedUserId))
+        {
+            return BadRequestProblemDetails("Unable to identify user");
+        }
+        
+        var result = await _campaignContributionCreatingService.CreateCampaignContributionAsync(
+            createRequest,
+            parsedUserId
+            );
 
         if (result.IsFailed)
         {
@@ -49,7 +60,7 @@ public class CampaignContributionController(
         return CreatedAtRoute(
             nameof(GetCampaignContribution),
             new { id = campaignContribution.Id },
-            _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(campaignContribution)
+            campaignContribution
             );
     }
 
@@ -59,7 +70,7 @@ public class CampaignContributionController(
         var userId = _userManager.GetUserId(User);
         if (userId is null)
         {
-            return Problem("Unable to identify user");
+            return BadRequestProblemDetails("Unable to identify user");
         }
         var result = await _campaignContributionRetrievalService.GetCampaignContributionByIdAsync(id);
 
@@ -68,5 +79,46 @@ public class CampaignContributionController(
             return result.Errors.ToDetailedBadRequest();
         }
         return result.Value;
+    }
+
+    [HttpPut("{id}", Name = nameof(UpdateCampaignContribution))]
+    public async Task<ActionResult<CampaignContributionGetResponseDto>> UpdateCampaignContribution(
+        [FromRoute] string id,
+        [FromBody] CampaignContributionUpdateRequestDto updateRequestDto
+    )
+    {
+        if (!Guid.TryParse(id, out var campaignContributionId))
+        {
+            return BadRequestProblemDetails("Invalid ID format");
+        }
+
+        if (campaignContributionId != updateRequestDto.Id)
+        {
+            return BadRequestProblemDetails("Campaign Contribution ID does not match.");
+        }
+        
+        var userId = _userManager.GetUserId(User);
+
+        if (userId is null)
+        {
+            return BadRequestProblemDetails("Unable to identify user.");
+        }
+
+        if (!Guid.TryParse(userId, out var parsedUserId))
+        {
+            return BadRequestProblemDetails("Unable to identify user.");
+        }
+
+        var updatedResult = await _campaignContributionUpdatingService.UpdateCampaignContributionAsync(
+            updateRequestDto,
+            parsedUserId,
+            updateRequestDto.campaignId
+        );
+
+        if (updatedResult.IsFailed)
+        {
+            return updatedResult.Errors.ToDetailedBadRequest();
+        }
+        return NoContent();
     }
 }
