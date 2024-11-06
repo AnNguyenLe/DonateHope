@@ -1,10 +1,12 @@
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.Authentication;
+using DonateHope.Core.ServiceContracts.CampaignCommentServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Core.ServiceContracts.Email;
 using DonateHope.Core.ServiceContracts.HtmlTemplate;
 using DonateHope.Core.Services.Authentication;
 using DonateHope.Core.Services.CampaignsServices;
+using DonateHope.Core.Services.CampaignCommentsServices;
 using DonateHope.Core.Services.EmailService;
 using DonateHope.Core.Services.HtmlTemplate;
 using DonateHope.Core.Validators.Authentication;
@@ -39,7 +41,10 @@ public static class DependencyInjectionServicesExtension
         services.TryAddSingleton<CampaignMapper>();
         services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
         services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
-
+        services.TryAddScoped<ICampaignCommentCreatingService, CampaignCommentCreatingService>();
+        services.TryAddScoped<ICampaignCommentRetrievalService, CampaignCommentRetrievalService>();
+        services.TryAddSingleton<ICampaignCommentsRepository, CampaignCommentsRepository>();
+        services.TryAddSingleton<CampaignCommentMapper>();
         return services;
     }
 }
