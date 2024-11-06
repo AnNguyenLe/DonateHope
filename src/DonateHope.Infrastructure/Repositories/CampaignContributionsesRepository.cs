@@ -139,7 +139,6 @@ public class CampaignContributionsesRepository(
                              amount = @Amount,
                              unit_of_measurement = @UnitOfMeasurement,
                              contribution_method = @ContributionMethod,
-                             campaign_id = @CampaignId,
                              updated_at = @UpdatedAt,
                              updated_by = @UpdatedBy
                          WHERE 

@@ -111,14 +111,17 @@ public class CampaignContributionController(
 
         var updatedResult = await _campaignContributionUpdatingService.UpdateCampaignContributionAsync(
             updateRequestDto,
-            parsedUserId,
-            updateRequestDto.campaignId
+            parsedUserId
         );
 
         if (updatedResult.IsFailed)
         {
             return updatedResult.Errors.ToDetailedBadRequest();
         }
-        return NoContent();
+        
+        return CreatedAtRoute(
+            nameof(UpdateCampaignContribution),
+            new { id = campaignContributionId },
+            updatedResult.Value);
     }
 }

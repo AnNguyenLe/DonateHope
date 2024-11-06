@@ -17,28 +17,28 @@ public class CampaignContributionUpdatingService (
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionContributionMapper;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
 
-    public async Task<Result> UpdateCampaignContributionAsync(
+    public async Task<Result<CampaignContributionGetResponseDto>> UpdateCampaignContributionAsync(
         CampaignContributionUpdateRequestDto updateRequestDto,
-        Guid userId,
-        Guid campaignId
+        Guid userId
     )
     {
         var queryResult = await _campaignContributionsRepository.GetCampaignContributionById(updateRequestDto.Id);
 
-        if (queryResult.IsSuccess || queryResult.ValueOrDefault is null)
+        if (queryResult.IsFailed || queryResult.ValueOrDefault is null)
         {
             return new ProblemDetailsError("Campaign contribution not found.");
         }
 
         var currentCampaignContribution = queryResult.Value;
-        if (userId != currentCampaignContribution.UserId || campaignId != currentCampaignContribution.CampaignId)
+        
+        if (userId != currentCampaignContribution.UserId)
         {
             return new ProblemDetailsError("You are unauthorized to update this campaign contribution.");
         }
         
         var updatedCampaignContribution = _campaignContributionMapper.MapCampaignContributionUpdateRequestDtoToCampaignContribution(updateRequestDto);
         updatedCampaignContribution.UpdatedAt = DateTime.UtcNow;
-        updatedCampaignContribution.UserId = userId;
+        updatedCampaignContribution.UpdatedBy = userId;
         
         var updateResult = await _campaignContributionsRepository.UpdateCampaignContribution(updatedCampaignContribution);
         if (updateResult.IsFailed)
@@ -46,6 +46,6 @@ public class CampaignContributionUpdatingService (
             return new ProblemDetailsError("Failed to update campaign contribution.");
         }
 
-        return Result.Ok();
+        return _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(updatedCampaignContribution);
     }
 }

@@ -12,6 +12,7 @@ public static class CampaignContributionExtensions
         campaignContribution.CreatedBy = ownerId;
         campaignContribution.UpdatedAt = now;
         campaignContribution.UpdatedBy = ownerId;
+        campaignContribution.UserId = ownerId;
 
         return campaignContribution;
     }

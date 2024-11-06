@@ -6,5 +6,5 @@ namespace DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts
 
 public interface ICampaignContributionUpdatingService
 {
-    Task<Result> UpdateCampaignContributionAsync(CampaignContributionUpdateRequestDto updateRequestDto, Guid userId, Guid campaignId);
+    Task<Result<CampaignContributionGetResponseDto>> UpdateCampaignContributionAsync(CampaignContributionUpdateRequestDto updateRequestDto, Guid userId);
 }

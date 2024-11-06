@@ -24,7 +24,6 @@ public partial class CampaignContributionMapper
     [MapperIgnoreSource(nameof(CampaignContribution.DeletedBy))]
     public partial CampaignContributionGetResponseDto MapCampaignContributionToCampaignContributionGetResponseDto(CampaignContribution campaignContribution);
     
-    [MapperIgnoreTarget(nameof(CampaignContribution.Id))]
     [MapperIgnoreTarget(nameof(CampaignContribution.UserId))]
     [MapperIgnoreTarget(nameof(CampaignContribution.User))]
     [MapperIgnoreTarget(nameof(CampaignContribution.CreatedAt))]
@@ -34,5 +33,6 @@ public partial class CampaignContributionMapper
     [MapperIgnoreTarget(nameof(CampaignContribution.IsDeleted))]
     [MapperIgnoreTarget(nameof(CampaignContribution.DeletedAt))]
     [MapperIgnoreTarget(nameof(CampaignContribution.DeletedBy))]
+    [MapperIgnoreTarget(nameof(CampaignContribution.CampaignId))]
     public partial CampaignContribution MapCampaignContributionUpdateRequestDtoToCampaignContribution(CampaignContributionUpdateRequestDto campaignContributionUpdateRequestDto);
 }
