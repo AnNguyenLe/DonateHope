@@ -34,6 +34,10 @@ public class CampaignContributionDeletingService(
             return new ProblemDetailsError("This campaign contribution is deleted.");
         }
         
+        deletedCampaignContribution.DeletedAt = DateTime.UtcNow;
+        deletedCampaignContribution.DeletedBy = deletedBy;
+        deletedCampaignContribution.ReasonForDeletion = reasonForDeletion;
+        
         var deletedResult = await _campaignContributionsRepository.DeleteCampaignContribution(
             campaignContributionId,
             deletedBy,
