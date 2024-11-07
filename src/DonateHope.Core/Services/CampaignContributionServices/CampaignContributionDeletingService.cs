@@ -21,6 +21,12 @@ public class CampaignContributionDeletingService(
         String reasonForDeletion 
         )
     {
+        // Check if reason for deletion is provided
+        if (string.IsNullOrWhiteSpace(reasonForDeletion))
+        {
+            return new ProblemDetailsError("Reason for deletion is required.");
+        }
+        
         var queryResult =
             await _campaignContributionsRepository.GetCampaignContributionById(campaignContributionId);
         if (queryResult.IsFailed || queryResult.ValueOrDefault is null)

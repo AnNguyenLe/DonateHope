@@ -137,6 +137,7 @@ public class CampaignContributionController(
             return BadRequestProblemDetails("Invalid ID format");
         }
         var userId = _userManager.GetUserId(User);
+        
         if (userId is null)
         {
             return BadRequestProblemDetails("Unable to identify user");
@@ -147,11 +148,6 @@ public class CampaignContributionController(
             return BadRequestProblemDetails("Invalid user identification");
         }
         
-        // Check if reason for deletion is provided
-        if (string.IsNullOrWhiteSpace(reasonForDeletionRequestDto.ReasonForDeletion))
-        {
-            return BadRequestProblemDetails("Reason for deletion is required.");
-        }
         var result = await _campaignContributionDeletingService.DeleteCampaignContributionAsync(
             campaignContributionId,
             deletedBy,
