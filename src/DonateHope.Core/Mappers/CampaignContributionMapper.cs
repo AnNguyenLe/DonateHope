@@ -28,8 +28,6 @@ public partial class CampaignContributionMapper
     [MapperIgnoreTarget(nameof(CampaignContribution.User))]
     [MapperIgnoreTarget(nameof(CampaignContribution.CreatedAt))]
     [MapperIgnoreTarget(nameof(CampaignContribution.CreatedBy))]
-    [MapperIgnoreTarget(nameof(CampaignContribution.UpdatedAt))]
-    [MapperIgnoreTarget(nameof(CampaignContribution.UpdatedBy))]
     [MapperIgnoreTarget(nameof(CampaignContribution.IsDeleted))]
     [MapperIgnoreTarget(nameof(CampaignContribution.DeletedAt))]
     [MapperIgnoreTarget(nameof(CampaignContribution.DeletedBy))]

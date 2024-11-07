@@ -37,6 +37,10 @@ public class CampaignContributionUpdatingService (
         }
         
         var updatedCampaignContribution = _campaignContributionMapper.MapCampaignContributionUpdateRequestDtoToCampaignContribution(updateRequestDto);
+        updatedCampaignContribution.CreatedAt = currentCampaignContribution.CreatedAt;
+        updatedCampaignContribution.CreatedBy = currentCampaignContribution.CreatedBy;
+        updatedCampaignContribution.CampaignId = currentCampaignContribution.CampaignId;
+        
         updatedCampaignContribution.UpdatedAt = DateTime.UtcNow;
         updatedCampaignContribution.UpdatedBy = userId;
         
