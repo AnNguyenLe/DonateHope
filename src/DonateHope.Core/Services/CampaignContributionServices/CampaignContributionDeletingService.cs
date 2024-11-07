@@ -34,10 +34,11 @@ public class CampaignContributionDeletingService(
             return new ProblemDetailsError(queryResult.Errors.First().Message);
         }
 
+        // Check if campaign contribution record exists
         var deletedCampaignContribution = queryResult.Value;
         if (deletedCampaignContribution.IsDeleted)
         {
-            return new ProblemDetailsError("This campaign contribution is deleted.");
+            return new ProblemDetailsError("This campaign contribution does not exist.");
         }
         
         deletedCampaignContribution.DeletedAt = DateTime.UtcNow;
