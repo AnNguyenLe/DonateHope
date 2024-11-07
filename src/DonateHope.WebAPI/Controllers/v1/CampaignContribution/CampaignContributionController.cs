@@ -18,6 +18,7 @@ public class CampaignContributionController(
     ICampaignContributionCreatingService campaignContributionCreatingService,
     ICampaignContributionRetrievalService campaignContributionRetrievalService,
     ICampaignContributionUpdatingService campaignContributionUpdatingService,
+    ICampaignContributionDeletingService campaignContributionDeletingService,
     UserManager<AppUser> userManager,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
     CampaignContributionMapper campaignContributionMapper
@@ -29,6 +30,7 @@ public class CampaignContributionController(
     private readonly ICampaignContributionCreatingService _campaignContributionCreatingService = campaignContributionCreatingService;
     private readonly ICampaignContributionRetrievalService _campaignContributionRetrievalService = campaignContributionRetrievalService;
     private readonly ICampaignContributionUpdatingService _campaignContributionUpdatingService = campaignContributionUpdatingService;
+    private readonly ICampaignContributionDeletingService _campaignContributionDeletingService = campaignContributionDeletingService;
 
     [HttpPost("create", Name = nameof(CreateCampaignContribution))]
     public async Task<ActionResult<CampaignContributionGetResponseDto>> CreateCampaignContribution(
@@ -123,5 +125,43 @@ public class CampaignContributionController(
             nameof(UpdateCampaignContribution),
             new { id = campaignContributionId },
             updatedResult.Value);
+    }
+
+    [HttpDelete("{id}", Name = nameof(DeleteCampaignContribution))]
+    public async Task<ActionResult<CampaignContributionDeleteResponseDto>> DeleteCampaignContribution(
+        [FromRoute] string id,
+        [FromBody] CampaignContributionDeleteRequestDto reasonForDeletionRequestDto)
+    {
+        if (!Guid.TryParse(id, out var campaignContributionId))
+        {
+            return BadRequestProblemDetails("Invalid ID format");
+        }
+        var userId = _userManager.GetUserId(User);
+        if (userId is null)
+        {
+            return BadRequestProblemDetails("Unable to identify user");
+        }
+
+        if (!Guid.TryParse(userId, out var deletedBy))
+        {
+            return BadRequestProblemDetails("Invalid user identification");
+        }
+        
+        // Check if reason for deletion is provided
+        if (string.IsNullOrWhiteSpace(reasonForDeletionRequestDto.ReasonForDeletion))
+        {
+            return BadRequestProblemDetails("Reason for deletion is required.");
+        }
+        var result = await _campaignContributionDeletingService.DeleteCampaignContributionAsync(
+            campaignContributionId,
+            deletedBy,
+            reasonForDeletionRequestDto.ReasonForDeletion
+            );
+
+        if (result.IsFailed)
+        {
+            return result.Errors.ToDetailedBadRequest();
+        }
+        return result.Value;
     }
 }

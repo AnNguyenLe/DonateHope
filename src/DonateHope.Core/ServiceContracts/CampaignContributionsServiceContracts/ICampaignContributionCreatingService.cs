@@ -1,5 +1,4 @@
 using DonateHope.Core.DTOs.CampaignContributionDTOs;
-using DonateHope.Domain.Entities;
 using FluentResults;
 
 namespace DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;

@@ -17,8 +17,8 @@ public class CampaignContribution : ITraceable
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
     public string? ReasonForDeletion { get; set; }
-    public Guid? UserId { get; set; }
+    public Guid UserId { get; set; }
     public AppUser? User { get; set; }
-    public Guid? CampaignId { get; set; }
+    public Guid CampaignId { get; set; }
     public Campaign? Campaign { get; set; }
 }

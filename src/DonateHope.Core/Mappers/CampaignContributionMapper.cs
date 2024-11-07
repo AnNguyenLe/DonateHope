@@ -33,4 +33,6 @@ public partial class CampaignContributionMapper
     [MapperIgnoreTarget(nameof(CampaignContribution.DeletedBy))]
     [MapperIgnoreTarget(nameof(CampaignContribution.CampaignId))]
     public partial CampaignContribution MapCampaignContributionUpdateRequestDtoToCampaignContribution(CampaignContributionUpdateRequestDto campaignContributionUpdateRequestDto);
+    
+    public partial CampaignContributionDeleteResponseDto MapCampaignContributionToCampaignContributionDeleteResponseDto(CampaignContribution campaignContribution);
 }

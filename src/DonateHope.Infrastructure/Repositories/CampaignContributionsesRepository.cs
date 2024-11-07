@@ -1,4 +1,3 @@
-using System.Data;
 using System.Linq.Expressions;
 using Dapper;
 using DonateHope.Core.Errors;
@@ -70,9 +69,10 @@ public class CampaignContributionsesRepository(
         var sqlCommand = """
                          UPDATE campaign_contributions
                          SET
-                            is_deleted = @isDeleted;
-                            deleted_at = @deletedAt;
-                            deleted_by = @deletedBy;
+                            is_deleted = @isDeleted,
+                            deleted_at = @deletedAt,
+                            deleted_by = @deletedBy,
+                            reason_for_deletion = @reasonForDeletion
                          WHERE id = @campaignContributionId
                          """;
         var totalAffectedRows = await dbConnection.ExecuteAsync(
@@ -81,7 +81,9 @@ public class CampaignContributionsesRepository(
             {
                 isDeleted = true,
                 deletedAt = DateTime.UtcNow,
-                deletedBy
+                deletedBy,
+                reasonForDeletion,
+                campaignContributionId
             });
         if (totalAffectedRows == 0)
         {

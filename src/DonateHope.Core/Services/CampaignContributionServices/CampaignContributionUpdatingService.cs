@@ -2,10 +2,8 @@ using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.Errors;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
-using DonateHope.Domain.Entities;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 

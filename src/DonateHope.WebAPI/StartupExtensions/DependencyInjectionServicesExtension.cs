@@ -48,6 +48,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignContributionCreatingService, CampaignContributionCreatingService>();
         services.TryAddScoped<ICampaignContributionRetrievalService, CampaignContributionRetrievalService>();
         services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
+        services.TryAddScoped<ICampaignContributionDeletingService, CampaignContributionDeletingService>();
         return services;
     }
 }
