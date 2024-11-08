@@ -2,8 +2,10 @@ using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.Errors;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
+using DonateHope.Core.Validators.CampaignContribution;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
+using FluentValidation;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 
@@ -21,20 +23,13 @@ public class CampaignContributionDeletingService(
         string reasonForDeletion 
         )
     {
-        // Check if reason for deletion is provided
-        if (string.IsNullOrWhiteSpace(reasonForDeletion))
-        {
-            return new ProblemDetailsError("Reason for deletion is required.");
-        }
-        
         var queryResult =
             await _campaignContributionsRepository.GetCampaignContributionById(campaignContributionId);
         if (queryResult.IsFailed || queryResult.ValueOrDefault is null)
         {
             return new ProblemDetailsError(queryResult.Errors.First().Message);
         }
-
-        // Check if campaign contribution record exists
+        
         var deletedCampaignContribution = queryResult.Value;
         if (deletedCampaignContribution.IsDeleted)
         {

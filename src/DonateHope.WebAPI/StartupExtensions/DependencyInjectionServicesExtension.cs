@@ -10,6 +10,7 @@ using DonateHope.Core.Services.CampaignsServices;
 using DonateHope.Core.Services.EmailService;
 using DonateHope.Core.Services.HtmlTemplate;
 using DonateHope.Core.Validators.Authentication;
+using DonateHope.Core.Validators.CampaignContribution;
 using DonateHope.Domain.RepositoryContracts;
 using DonateHope.Infrastructure.Data;
 using DonateHope.Infrastructure.Repositories;
@@ -49,6 +50,8 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignContributionRetrievalService, CampaignContributionRetrievalService>();
         services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
         services.TryAddScoped<ICampaignContributionDeletingService, CampaignContributionDeletingService>();
+
+        services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
         return services;
     }
 }

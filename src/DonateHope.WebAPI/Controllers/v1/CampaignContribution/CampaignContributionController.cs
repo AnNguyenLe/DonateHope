@@ -5,6 +5,7 @@ using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
 using DonateHope.Domain.IdentityEntities;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,8 @@ public class CampaignContributionController(
     ICampaignContributionRetrievalService campaignContributionRetrievalService,
     ICampaignContributionUpdatingService campaignContributionUpdatingService,
     ICampaignContributionDeletingService campaignContributionDeletingService,
+    IValidator<CampaignContributionDeleteRequestDto> campaignContributionDeleteRequestValidator,
+    IValidator<CampaignContributionUpdateRequestDto> campaignContributionUpdateRequestValidator,
     UserManager<AppUser> userManager,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
     CampaignContributionMapper campaignContributionMapper
@@ -31,6 +34,8 @@ public class CampaignContributionController(
     private readonly ICampaignContributionRetrievalService _campaignContributionRetrievalService = campaignContributionRetrievalService;
     private readonly ICampaignContributionUpdatingService _campaignContributionUpdatingService = campaignContributionUpdatingService;
     private readonly ICampaignContributionDeletingService _campaignContributionDeletingService = campaignContributionDeletingService;
+    private readonly IValidator<CampaignContributionUpdateRequestDto> _campaignContributionUpdateValidator = campaignContributionUpdateRequestValidator;
+    private readonly IValidator<CampaignContributionDeleteRequestDto> _campaignContributionDeleteValidator = campaignContributionDeleteRequestValidator;
 
     [HttpPost("create", Name = nameof(CreateCampaignContribution))]
     public async Task<ActionResult<CampaignContributionGetResponseDto>> CreateCampaignContribution(
@@ -89,6 +94,14 @@ public class CampaignContributionController(
         [FromBody] CampaignContributionUpdateRequestDto updateRequestDto
     )
     {
+        var modelValidationResult = await _campaignContributionUpdateValidator.ValidateAsync(updateRequestDto);
+        if (!modelValidationResult.IsValid)
+        {
+            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
+                title: "Failed to update campaign contribution.",
+                detail: "Make sure all the required fields are properly entered.");
+        }
+        
         if (!Guid.TryParse(id, out var campaignContributionId))
         {
             return BadRequestProblemDetails("Invalid ID format");
@@ -132,6 +145,16 @@ public class CampaignContributionController(
         [FromRoute] string id,
         [FromBody] CampaignContributionDeleteRequestDto reasonForDeletionRequestDto)
     {
+        var modelValidationResult = await _campaignContributionDeleteValidator.ValidateAsync(reasonForDeletionRequestDto);
+        
+        if (!modelValidationResult.IsValid)
+        {
+            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
+                title: "Failed to delete campaign contribution.",
+                detail: "Make sure all the required fields are properly entered."
+            );
+        }
+        
         if (!Guid.TryParse(id, out var campaignContributionId))
         {
             return BadRequestProblemDetails("Invalid ID format");
