@@ -9,7 +9,6 @@ public interface ICampaignCommentsRepository
     Task<Result<CampaignComment>> GetCampaignCommentById(Guid campaignCommentId);
     Task<IEnumerable<CampaignComment>> GetCampaignComments();
     Task<IEnumerable<CampaignComment>> GetCampaignComments(Func<CampaignComment, bool> predicate);
-    Task<int> ModifyCampaignComment(Guid campaignCommentId, CampaignComment updatedCampaignComment);
+    Task<Result<int>> UpdateCampaignComment(CampaignComment updatedCampaignComment);
     Task<int> DeleteCampaignComment(Guid campaignCommentId);
-    Task<int> DeleteCampaignCommentPermanently(Guid campaignCommentId);
 }
