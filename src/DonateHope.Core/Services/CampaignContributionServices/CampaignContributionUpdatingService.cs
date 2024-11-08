@@ -34,7 +34,7 @@ public class CampaignContributionUpdatingService (
             return new ProblemDetailsError("Unit of measurement is not valid.");
         }
         
-        // Check if Contribution Method is vaild
+        // Check if Contribution Method is valid
         if (!Enum.TryParse<ContributionMethods>(updateRequestDto.ContributionMethod, true, out var contributionMethod) ||
             !Enum.IsDefined(typeof(ContributionMethods), contributionMethod))
         {

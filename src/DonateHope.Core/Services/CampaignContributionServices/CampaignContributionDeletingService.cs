@@ -18,7 +18,7 @@ public class CampaignContributionDeletingService(
     public async Task<Result<CampaignContributionDeleteResponseDto>> DeleteCampaignContributionAsync(
         Guid campaignContributionId,
         Guid deletedBy,
-        String reasonForDeletion 
+        string reasonForDeletion 
         )
     {
         // Check if reason for deletion is provided
