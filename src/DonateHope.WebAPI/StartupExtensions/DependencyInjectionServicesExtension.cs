@@ -13,6 +13,7 @@ using DonateHope.Core.Validators.Authentication;
 using DonateHope.Domain.RepositoryContracts;
 using DonateHope.Infrastructure.Data;
 using DonateHope.Infrastructure.Repositories;
+
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -43,6 +44,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
         services.TryAddScoped<ICampaignCommentCreatingService, CampaignCommentCreatingService>();
         services.TryAddScoped<ICampaignCommentRetrievalService, CampaignCommentRetrievalService>();
+        services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
         services.TryAddSingleton<ICampaignCommentsRepository, CampaignCommentsRepository>();
         services.TryAddSingleton<CampaignCommentMapper>();
         return services;
