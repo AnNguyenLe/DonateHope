@@ -51,31 +51,6 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
         return await dbConnection.ExecuteAsync(sqlCommand, campaignComment);
     }
 
-    public async Task<int> DeleteCampaignComment(Guid campaignCommentId)
-    {
-        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
-
-        var sqlCommand = """
-                UPDATE campaign_comments
-                SET
-                    end_date = @endDate,
-                    updated_at = @updatedAt,
-                    updated_by = @updatedBy,
-                    is_deleted = @isDeleted,
-                    deleted_at = @deletedAt,
-                    deleted_by = @deletedBy,
-                    is_active = @isActive,
-                    active_status_note = @activeStatusNote
-                WHERE id = @campaignCommentId
-            """;
-
-        // TODO: Update campaign_log also
-        return await dbConnection.ExecuteAsync(
-            sqlCommand,
-            new { endDate = DateTime.UtcNow, updatedAt = DateTime.UtcNow, }
-        );
-    }
-
 
     public Task<IEnumerable<CampaignComment>> GetCampaignComments()
     {
@@ -112,12 +87,53 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
         return queryResult;
     }
 
-    public Task<int> ModifyCampaignComment(Guid campaignCommentId, CampaignComment updatedCampaignComment)
+    public async Task<Result<int>> UpdateCampaignComment(CampaignComment updatedCampaignComment)
     {
-        throw new NotImplementedException();
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+
+        var sqlCommand = """
+                UPDATE campaign_comments
+                SET
+                    content = @Content, 
+                    updated_at = @UpdatedAt,
+                    updated_by = @UpdatedBy,
+                    campaign_id = @CampaignId,
+                    user_id = @UserId
+                WHERE
+                    id = @Id;
+            """;
+
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, updatedCampaignComment);
+
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError("Unable to update the campaign comment.");
+        }
+
+        return totalAffectedRows;
+    }
+    public async Task<Result<int>> DeleteCampaigCommentPermanently(Guid campaignCommentId)
+    {
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+
+        var sqlCommand = """
+                DELETE campaign_comments
+                WHERE id = @campaignCommentId;
+            """;
+
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, new { campaignCommentId });
+
+        if (totalAffectedRows == 0)
+        {
+            return new ProblemDetailsError(
+                $"Unable to permanently delete campaign with ID: {campaignCommentId}"
+            );
+        }
+
+        return totalAffectedRows;
     }
 
-    public Task<int> DeleteCampaignCommentPermanently(Guid campaignCommentId)
+    public Task<int> DeleteCampaignComment(Guid campaignCommentId)
     {
         throw new NotImplementedException();
     }
