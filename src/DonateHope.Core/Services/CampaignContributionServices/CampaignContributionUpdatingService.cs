@@ -2,18 +2,17 @@ using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.Errors;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
-using DonateHope.Domain.Enums;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 
 public class CampaignContributionUpdatingService (
-    CampaignContributionMapper campaignContributionContributionMapper,
+    CampaignContributionMapper campaignContributionMapper,
     ICampaignContributionsRepository campaignContributionsRepository
     ) : ICampaignContributionUpdatingService
 {
-    private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionContributionMapper;
+    private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
 
     public async Task<Result<CampaignContributionGetResponseDto>> UpdateCampaignContributionAsync(

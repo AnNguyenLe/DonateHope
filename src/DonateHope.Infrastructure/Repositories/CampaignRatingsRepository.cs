@@ -10,23 +10,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DonateHope.Infrastructure.Repositories;
 
-public class CampaignContributionsesRepository(
+public class CampaignRatingsRepository(
     IDbConnectionFactory dbConnectionFactory,
     ApplicationDbContext applicationDbContext
-    ) : ICampaignContributionsRepository
+    ) : ICampaignRatingsRepository
 {
     private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
     private readonly ApplicationDbContext _dbContext = applicationDbContext;
-    public async Task<Result<int>> AddCampaignContribution(CampaignContribution campaignContribution)
+    public async Task<Result<int>> AddCampaignRating(CampaignRating campaignRating)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var sqlCommand = """
-                         INSERT INTO campaign_contributions
+                         INSERT INTO campaign_ratings
                              (
                                 id,
-                                amount,
-                                unit_of_measurement,
-                                contribution_method,
+                                rating_point,
+                                feedback,
                                 created_at,
                                 updated_at,
                                 created_by,
@@ -38,9 +37,8 @@ public class CampaignContributionsesRepository(
                          VALUES
                              (
                                 @Id,
-                                @Amount,
-                                @UnitOfMeasurement,
-                                @ContributionMethod,
+                                @RatingPoint,
+                                @Feedback,
                                 @CreatedAt,
                                 @UpdatedAt,
                                 @CreatedBy,
@@ -50,30 +48,28 @@ public class CampaignContributionsesRepository(
                                 @CampaignId
                              )
                          """;
-        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, campaignContribution);
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, campaignRating);
         if (totalAffectedRows == 0)
         {
-            return new ProblemDetailsError("Failed to add campaign contribution.");
+            return new ProblemDetailsError("Failed to add campaign rating.");
         }
         
         return totalAffectedRows;
     }
 
-    public async Task<Result<int>> DeleteCampaignContribution(
-        Guid campaignContributionId,
-        Guid deletedBy,
-        string reasonForDeletion
+    public async Task<Result<int>> DeleteCampaignRating(
+        Guid campaignRatingId,
+        Guid deletedBy
         )
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var sqlCommand = """
-                         UPDATE campaign_contributions
+                         UPDATE campaign_ratings
                          SET
                             is_deleted = @isDeleted,
                             deleted_at = @deletedAt,
-                            deleted_by = @deletedBy,
-                            reason_for_deletion = @reasonForDeletion
-                         WHERE id = @campaignContributionId
+                            deleted_by = @deletedBy
+                         WHERE id = @CampaignRatingId
                          """;
         var totalAffectedRows = await dbConnection.ExecuteAsync(
             sqlCommand,
@@ -82,8 +78,7 @@ public class CampaignContributionsesRepository(
                 isDeleted = true,
                 deletedAt = DateTime.UtcNow,
                 deletedBy,
-                reasonForDeletion,
-                campaignContributionId
+                campaignRatingId
             });
         if (totalAffectedRows == 0)
         {
@@ -96,60 +91,59 @@ public class CampaignContributionsesRepository(
     /// <summary>
     /// USING THIS WITH CAUTION! Your data will be deleted permanently and will not be able to recovered!
     /// </summary>
-    public async Task<Result<int>> DeleteCampaignContributionPermanently(Guid campaignContributionId)
+    public async Task<Result<int>> DeleteCampaignRatingPermanently(Guid CampaignRatingId)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var sqlCommand = """
-                         DELETE campaign_contributions
-                         WHERE id = @campaignContributionId;
+                         DELETE campaign_ratings
+                         WHERE id = @CampaignRatingId;
                          """;
-        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, new { campaignContributionId });
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, new { CampaignRatingId });
         if (totalAffectedRows == 0)
         {
             return new ProblemDetailsError(
-                $"Unable to permanently delete campaign_contribution with ID: {campaignContributionId}"
+                $"Unable to permanently delete campaign_rating with ID: {CampaignRatingId}"
             );
         }
         return totalAffectedRows;
     }
 
-    public IQueryable<CampaignContribution> GetCampaignContributions(Expression<Func<CampaignContribution, bool>> predicate)
+    public IQueryable<CampaignRating> GetCampaignRatings(Expression<Func<CampaignRating, bool>> predicate)
     {
-        return _dbContext.CampaignContributions.Where(predicate);
+        return _dbContext.CampaignRatings.Where(predicate);
     }
 
-    public async Task<Result<CampaignContribution>> GetCampaignContributionById(Guid campaignContributionId)
+    public async Task<Result<CampaignRating>> GetCampaignRatingById(Guid campaignRatingId)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var queryResult = await _dbContext
-            .CampaignContributions.Where(cc => cc.Id == campaignContributionId)
+            .CampaignRatings.Where(cc => cc.Id == campaignRatingId)
             .FirstOrDefaultAsync();
         if (queryResult is null)
         {
-            return new ProblemDetailsError($"CampaignContribution with ID: {campaignContributionId} not found.");
+            return new ProblemDetailsError($"CampaignRating with ID: {campaignRatingId} not found.");
         }
 
         return queryResult;
     }
 
-    public async Task<Result<int>> UpdateCampaignContribution(CampaignContribution updateCampaignContribution)
+    public async Task<Result<int>> UpdateCampaignRating(CampaignRating updateCampaignRating)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var sqlCommand = """
-                         UPDATE campaign_contributions
+                         UPDATE campaign_ratings
                          SET
-                             amount = @Amount,
-                             unit_of_measurement = @UnitOfMeasurement,
-                             contribution_method = @ContributionMethod,
+                             rating_point = @RatingPoint,
+                             feedback = @Feedback,
                              updated_at = @UpdatedAt,
                              updated_by = @UpdatedBy
                          WHERE 
                              id = @Id;
                          """;
-        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, updateCampaignContribution);
+        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, updateCampaignRating);
         if (totalAffectedRows == 0)
         {
-            return new ProblemDetailsError("Unable to update campaign_contribution.");
+            return new ProblemDetailsError("Unable to update campaign_rating.");
         }
         return totalAffectedRows;
     }
