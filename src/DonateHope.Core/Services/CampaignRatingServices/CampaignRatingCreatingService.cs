@@ -2,19 +2,24 @@ using DonateHope.Core.DTOs.CampaignRatingDTOs;
 using DonateHope.Core.Errors;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignRatingsServiceContracts;
+using DonateHope.Core.Services.CampaignContributionServices;
 using DonateHope.Domain.EntityExtensions;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignRatingServices;
 
 public class CampaignRatingCreatingService(
+    ILogger<CampaignContributionCreatingService> logger,
     ICampaignRatingsRepository campaignRatingsRepository,
+    ICampaignsRepository campaignsRepository,
     CampaignRatingMapper campaignRatingMapper
     ) : ICampaignRatingCreatingService
 {
-    private readonly ICampaignRatingsRepository
-        _campaignRatingsRepository = campaignRatingsRepository;
+    private readonly ILogger<CampaignContributionCreatingService> _logger = logger;
+    private readonly ICampaignRatingsRepository _campaignRatingsRepository = campaignRatingsRepository;
+    private readonly ICampaignsRepository _campaignsRepository = campaignsRepository;
     private readonly CampaignRatingMapper _campaignRatingMapper = campaignRatingMapper;
 
     public async Task<Result<CampaignRatingGetResponseDto>> CreateCampaignRatingAsync(
@@ -25,6 +30,13 @@ public class CampaignRatingCreatingService(
         var campaignRating = _campaignRatingMapper
             .MapCampaignRatingCreateRequestDtoToCampaignRating(campaignRatingCreateRequestDto)
             .OnCampaignRatingCreating(userId);
+        
+        var campaign = await _campaignsRepository.GetCampaignById(campaignRating.CampaignId);
+        if (campaign.ValueOrDefault is null)
+        {
+            _logger.LogWarning("Campaign not found for Id: {CampaignId}.", campaignRating.CampaignId);
+            return new ProblemDetailsError("Campaign not found.");
+        }
         
         var queryResult = await _campaignRatingsRepository.AddCampaignRating(campaignRating);
         if (queryResult.IsFailed)
