@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 namespace DonateHope.WebAPI.Controllers.v1.CampaignComment;
 
 [ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/campaign-comments")]
+[Route("api/v{version:apiVersion}/campaign-comment")]
 [ApiController]
 public class CampaignCommentController(
     ICampaignCommentCreatingService campaignCommentCreatingService,
