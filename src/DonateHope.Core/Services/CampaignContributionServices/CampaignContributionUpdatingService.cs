@@ -4,14 +4,17 @@ using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 
 public class CampaignContributionUpdatingService (
+    ILogger<CampaignContributionUpdatingService> logger,
     CampaignContributionMapper campaignContributionMapper,
     ICampaignContributionsRepository campaignContributionsRepository
     ) : ICampaignContributionUpdatingService
 {
+    private readonly ILogger<CampaignContributionUpdatingService> _logger = logger;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
 
@@ -24,6 +27,7 @@ public class CampaignContributionUpdatingService (
 
         if (queryResult.IsFailed || queryResult.ValueOrDefault is null)
         {
+            _logger.LogWarning("Failed to retrieve campaign contribution {CampaignContributionId}", updateRequestDto.Id);
             return new ProblemDetailsError("Campaign contribution not found.");
         }
 
@@ -31,6 +35,7 @@ public class CampaignContributionUpdatingService (
         
         if (userId != currentCampaignContribution.UserId)
         {
+            _logger.LogWarning("User id {UserId} is unauthorized to update campaign contribution {CampaignContributionId}", userId, updateRequestDto.Id);
             return new ProblemDetailsError("You are unauthorized to update this campaign contribution.");
         }
         
@@ -45,9 +50,11 @@ public class CampaignContributionUpdatingService (
         var updateResult = await _campaignContributionsRepository.UpdateCampaignContribution(updatedCampaignContribution);
         if (updateResult.IsFailed)
         {
+            _logger.LogWarning("Failed to update campaign contribution {CampaignContributionId}, Error message: {ErrorMessage}", updateRequestDto.Id, updateResult.Errors.First().Message);
             return new ProblemDetailsError("Failed to update campaign contribution.");
         }
 
+        _logger.LogInformation("Successfully updated campaign contribution {CampaignContributionId}", updateRequestDto.Id);
         return _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(updatedCampaignContribution);
     }
 }

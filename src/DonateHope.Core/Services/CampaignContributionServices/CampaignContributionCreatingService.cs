@@ -40,6 +40,7 @@ public class CampaignContributionCreatingService(
         var queryResult = await _campaignContributionsRepository.AddCampaignContribution(campaignContribution);
         if (queryResult.IsFailed)
         {
+            _logger.LogWarning("Failed to create campaign contribution: {ErrorMessage}.", queryResult.Errors.First().Message);
             return new ProblemDetailsError(
                 "Unexpected error(s) during the campaign contribution creating process. Please contact support team."
             );
@@ -48,12 +49,11 @@ public class CampaignContributionCreatingService(
         var totalAffectedRows = queryResult.ValueOrDefault;
         if (totalAffectedRows == 0)
         {
+            _logger.LogWarning("No row affected when attempting to create campaign contribution for campaignId: {CampaignId}.", campaignContribution.CampaignId);
             return new ProblemDetailsError("Failed to create campaign contribution.");
         }
         
         _logger.LogInformation("Successfully created campaign contribution.");
-        
-        var mappedDto = _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(campaignContribution);
-        return mappedDto;
+        return _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(campaignContribution);
     }
 }
