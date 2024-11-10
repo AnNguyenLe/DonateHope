@@ -33,14 +33,18 @@ public class CampaignContributionCreatingService(
         var campaign = await _campaignsRepository.GetCampaignById(campaignContribution.CampaignId);
         if (campaign.ValueOrDefault is null)
         {
-            _logger.LogWarning("Campaign not found for Id: {CampaignId}.", campaignContribution.CampaignId);
+            _logger.LogWarning("Campaign not found for Id: {CampaignId}", campaignContribution.CampaignId);
             return new ProblemDetailsError("Campaign not found.");
         }
         
         var queryResult = await _campaignContributionsRepository.AddCampaignContribution(campaignContribution);
         if (queryResult.IsFailed)
         {
-            _logger.LogWarning("Failed to create campaign contribution: {ErrorMessage}.", queryResult.Errors.First().Message);
+            _logger.LogWarning(
+                "Failed to create campaign contribution {CampaignContributionId}. Error: {ErrorMessage}",
+                campaignContribution.Id,
+                queryResult.Errors.First().Message
+                );
             return new ProblemDetailsError(
                 "Unexpected error(s) during the campaign contribution creating process. Please contact support team."
             );
@@ -49,11 +53,15 @@ public class CampaignContributionCreatingService(
         var totalAffectedRows = queryResult.ValueOrDefault;
         if (totalAffectedRows == 0)
         {
-            _logger.LogWarning("No row affected when attempting to create campaign contribution for campaignId: {CampaignId}.", campaignContribution.CampaignId);
+            _logger.LogWarning("No row affected when attempting to create campaign contribution for campaignId {CampaignId}.", campaignContribution.CampaignId);
             return new ProblemDetailsError("Failed to create campaign contribution.");
         }
         
-        _logger.LogInformation("Successfully created campaign contribution.");
+        _logger.LogInformation(
+            "Successfully created campaign contribution {CampaignContributionId} for campaign {CampaignId}", 
+            campaignContribution.Id,
+            campaignContribution.CampaignId
+            );
         return _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(campaignContribution);
     }
 }

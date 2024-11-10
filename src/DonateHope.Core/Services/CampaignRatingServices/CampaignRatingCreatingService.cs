@@ -34,13 +34,18 @@ public class CampaignRatingCreatingService(
         var campaign = await _campaignsRepository.GetCampaignById(campaignRating.CampaignId);
         if (campaign.ValueOrDefault is null)
         {
-            _logger.LogWarning("Campaign not found for Id: {CampaignId}.", campaignRating.CampaignId);
+            _logger.LogWarning("Campaign not found for Id: {CampaignId}", campaignRating.CampaignId);
             return new ProblemDetailsError("Campaign not found.");
         }
         
         var queryResult = await _campaignRatingsRepository.AddCampaignRating(campaignRating);
         if (queryResult.IsFailed)
         {
+            _logger.LogWarning(
+                "Failed to create campaign rating {CampaignRatingId}. Error: {ErrorMessage}", 
+                campaignRating.Id,
+                queryResult.Errors.First().Message
+                );
             return new ProblemDetailsError(
                 "Unexpected error(s) during the campaign rating creating process. Please contact support team."
             );
@@ -49,11 +54,15 @@ public class CampaignRatingCreatingService(
         var totalAffectedRows = queryResult.ValueOrDefault;
         if (totalAffectedRows == 0)
         {
+            _logger.LogWarning("No row affected when attempting to create campaign rating for campaignId: {CampaignId}", campaignRating.CampaignId);
             return new ProblemDetailsError("Failed to create campaign rating.");
         }
         
-        var mappedDto = _campaignRatingMapper.MapCampaignRatingToCampaignRatingGetResponseDto(campaignRating);
-        
-        return mappedDto;
+        _logger.LogInformation(
+            "Successfully created campaign contribution {CampaignContributionId} for campaign {CampaignId}", 
+            campaignRating.Id,
+            campaignRating.CampaignId
+            );
+        return _campaignRatingMapper.MapCampaignRatingToCampaignRatingGetResponseDto(campaignRating);
     }
 }

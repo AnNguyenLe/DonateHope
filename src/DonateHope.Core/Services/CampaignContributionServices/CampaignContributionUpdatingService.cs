@@ -35,7 +35,11 @@ public class CampaignContributionUpdatingService (
         
         if (userId != currentCampaignContribution.UserId)
         {
-            _logger.LogWarning("User id {UserId} is unauthorized to update campaign contribution {CampaignContributionId}", userId, updateRequestDto.Id);
+            _logger.LogWarning(
+                "User id {UserId} is unauthorized to update campaign contribution {CampaignContributionId}",
+                userId,
+                updateRequestDto.Id
+                );
             return new ProblemDetailsError("You are unauthorized to update this campaign contribution.");
         }
         
@@ -50,7 +54,11 @@ public class CampaignContributionUpdatingService (
         var updateResult = await _campaignContributionsRepository.UpdateCampaignContribution(updatedCampaignContribution);
         if (updateResult.IsFailed)
         {
-            _logger.LogWarning("Failed to update campaign contribution {CampaignContributionId}, Error message: {ErrorMessage}", updateRequestDto.Id, updateResult.Errors.First().Message);
+            _logger.LogWarning(
+                "Failed to update campaign contribution {CampaignContributionId}, Error message: {ErrorMessage}",
+                updateRequestDto.Id,
+                updateResult.Errors.First().Message
+                );
             return new ProblemDetailsError("Failed to update campaign contribution.");
         }
 

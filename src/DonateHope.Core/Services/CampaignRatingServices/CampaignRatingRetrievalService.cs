@@ -4,14 +4,17 @@ using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignRatingsServiceContracts;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
+using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignRatingServices;
 
 public class CampaignRatingRetrievalService(
+    ILogger<CampaignRatingRetrievalService> logger,
     ICampaignRatingsRepository campaignRatingsRepository,
     CampaignRatingMapper campaignRatingMapper
     ) : ICampaignRatingRetrievalService
 {
+    private readonly ILogger<CampaignRatingRetrievalService> _logger = logger;
     private readonly ICampaignRatingsRepository _campaignRatingsRepository = campaignRatingsRepository;
     private readonly CampaignRatingMapper _campaignRatingMapper = campaignRatingMapper;
 
@@ -21,11 +24,15 @@ public class CampaignRatingRetrievalService(
         var campaignRatingResult = await _campaignRatingsRepository.GetCampaignRatingById(campaignRatingId);
         if (campaignRatingResult.IsFailed)
         {
+            _logger.LogWarning(
+                "Failed to retrieve campaign rating {CampaignRatingId}. Error: {ErrorMessage}", 
+                campaignRatingId,
+                campaignRatingResult.Errors.First().Message
+            );
             return new ProblemDetailsError(campaignRatingResult.Errors.First().Message);
         }
         
-        var mappedDto = _campaignRatingMapper.MapCampaignRatingToCampaignRatingGetResponseDto(campaignRatingResult.Value);
-
-        return mappedDto;
+        _logger.LogInformation("Successfully retrieved campaign rating {CampaignRatingId}", campaignRatingId);
+        return _campaignRatingMapper.MapCampaignRatingToCampaignRatingGetResponseDto(campaignRatingResult.Value);
     }
 }

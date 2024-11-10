@@ -29,14 +29,18 @@ public class CampaignContributionDeletingService(
         var queryResult = await _campaignContributionsRepository.GetCampaignContributionById(campaignContributionId);
         if (queryResult.IsFailed || queryResult.ValueOrDefault is null)
         {
-            _logger.LogWarning("Failed to retrieve campaign contribution {CampaignContributionId}, Error message: {ErrorMessage}", campaignContributionId, queryResult.Errors.First().Message);
+            _logger.LogWarning(
+                "Failed to retrieve campaign contribution {CampaignContributionId}. Error: {ErrorMessage}",
+                campaignContributionId,
+                queryResult.Errors.First().Message
+                );
             return new ProblemDetailsError(queryResult.Errors.First().Message);
         }
         
         var deletedCampaignContribution = queryResult.Value;
         if (deletedCampaignContribution.IsDeleted)
         {
-            _logger.LogWarning("The campaign contribution {CampaignContributionId} is soft deleted.", deletedCampaignContribution.Id);
+            _logger.LogWarning("The campaign contribution {CampaignContributionId} is already marked as deleted.", deletedCampaignContribution.Id);
             return new ProblemDetailsError("This campaign contribution does not exist.");
         }
         
@@ -52,11 +56,16 @@ public class CampaignContributionDeletingService(
 
         if (deletedResult.IsFailed)
         {
-            _logger.LogWarning("Failed to delete campaign contribution {ErrorMessage}", deletedResult.Errors.First().Message);
+            _logger.LogWarning(
+                "Failed to delete campaign contribution {CampaignContributionId}. Error: {ErrorMessage}",
+                campaignContributionId,
+                deletedResult.Errors.First().Message
+                );
             return new ProblemDetailsError("Failed to delete campaign contribution.");
         }
         
-        _logger.LogInformation("Successfully deleted campaign contribution {CampaignContributionId}", campaignContributionId);
+        _logger.LogInformation(
+            "Successfully deleted campaign contribution {CampaignContributionId}", campaignContributionId);
         return _campaignContributionMapper.MapCampaignContributionToCampaignContributionDeleteResponseDto(deletedCampaignContribution);
     }
 }

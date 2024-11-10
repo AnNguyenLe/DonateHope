@@ -23,7 +23,11 @@ public class CampaignContributionRetrievalService(
         var campaignContributionResult = await _campaignContributionsRepository.GetCampaignContributionById(campaignContributionId);
         if (campaignContributionResult.IsFailed)
         {
-            _logger.LogWarning("Failed to retrieve campaign contribution {CampaignContributionId}", campaignContributionId);
+            _logger.LogWarning(
+                "Failed to retrieve campaign contribution {CampaignContributionId}. Error: {ErrorMessage}", 
+                campaignContributionId,
+                campaignContributionResult.Errors.First().Message
+                );
             return new ProblemDetailsError(campaignContributionResult.Errors.First().Message);
         }
         
