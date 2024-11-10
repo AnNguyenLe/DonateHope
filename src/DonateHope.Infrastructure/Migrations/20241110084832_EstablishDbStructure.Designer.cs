@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DonateHope.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241109170205_AddColumnsCampaignRating")]
-    partial class AddColumnsCampaignRating
+    [Migration("20241110084832_EstablishDbStructure")]
+    partial class EstablishDbStructure
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
