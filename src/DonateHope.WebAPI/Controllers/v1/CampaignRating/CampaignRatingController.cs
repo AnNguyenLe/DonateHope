@@ -16,10 +16,10 @@ namespace DonateHope.WebAPI.Controllers.v1.CampaignRating;
 [Route("api/v{version:apiVersion}/campaign-rating")]
 [ApiController]
 public class CampaignRatingController(
-    ICampaignRatingCreatingService campaignRatingCreatingService,
-    ICampaignRatingRetrievalService campaignRatingRetrievalService,
-    ICampaignRatingUpdatingService campaignRatingUpdatingService,
-    ICampaignRatingDeletingService campaignRatingDeletingService,
+    ICampaignRatingCreateService campaignRatingCreateService,
+    ICampaignRatingRetrieveService campaignRatingRetrieveService,
+    ICampaignRatingUpdateService campaignRatingUpdateService,
+    ICampaignRatingDeleteService campaignRatingDeleteService,
     IValidator<CampaignRatingUpdateRequestDto> campaignRatingUpdateRequestValidator,
     UserManager<AppUser> userManager,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
@@ -29,10 +29,10 @@ public class CampaignRatingController(
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly CampaignRatingMapper _campaignRatingMapper = campaignRatingMapper;
     private readonly MyAppServerConfiguration _app = myAppServerConfiguration.Value;
-    private readonly ICampaignRatingCreatingService _campaignRatingCreatingService = campaignRatingCreatingService;
-    private readonly ICampaignRatingRetrievalService _campaignRatingRetrievalService = campaignRatingRetrievalService;
-    private readonly ICampaignRatingUpdatingService _campaignRatingUpdatingService = campaignRatingUpdatingService;
-    private readonly ICampaignRatingDeletingService _campaignRatingDeletingService = campaignRatingDeletingService;
+    private readonly ICampaignRatingCreateService _campaignRatingCreateService = campaignRatingCreateService;
+    private readonly ICampaignRatingRetrieveService _campaignRatingRetrieveService = campaignRatingRetrieveService;
+    private readonly ICampaignRatingUpdateService _campaignRatingUpdateService = campaignRatingUpdateService;
+    private readonly ICampaignRatingDeleteService _campaignRatingDeleteService = campaignRatingDeleteService;
     private readonly IValidator<CampaignRatingUpdateRequestDto> _campaignRatingUpdateValidator = campaignRatingUpdateRequestValidator;
 
     [HttpPost("create", Name = nameof(CreateCampaignRating))]
@@ -50,7 +50,7 @@ public class CampaignRatingController(
             return BadRequestProblemDetails("Unable to identify user");
         }
         
-        var result = await _campaignRatingCreatingService.CreateCampaignRatingAsync(
+        var result = await _campaignRatingCreateService.CreateCampaignRatingAsync(
             createRequest,
             parsedUserId
             );
@@ -77,7 +77,7 @@ public class CampaignRatingController(
         {
             return BadRequestProblemDetails("Unable to identify user");
         }
-        var result = await _campaignRatingRetrievalService.GetCampaignRatingByIdAsync(id);
+        var result = await _campaignRatingRetrieveService.GetCampaignRatingByIdAsync(id);
 
         if (result.IsFailed)
         {
@@ -122,7 +122,7 @@ public class CampaignRatingController(
             return BadRequestProblemDetails("Unable to identify user.");
         }
 
-        var updatedResult = await _campaignRatingUpdatingService.UpdateCampaignRatingAsync(
+        var updatedResult = await _campaignRatingUpdateService.UpdateCampaignRatingAsync(
             updateRequestDto,
             parsedUserId
         );
@@ -159,7 +159,7 @@ public class CampaignRatingController(
             return BadRequestProblemDetails("Invalid user identification");
         }
         
-        var result = await _campaignRatingDeletingService.DeleteCampaignRatingAsync(
+        var result = await _campaignRatingDeleteService.DeleteCampaignRatingAsync(
             campaignRatingId,
             deletedBy
             );

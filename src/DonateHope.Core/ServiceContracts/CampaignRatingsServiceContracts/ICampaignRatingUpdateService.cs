@@ -4,7 +4,7 @@ using FluentResults;
 
 namespace DonateHope.Core.ServiceContracts.CampaignRatingsServiceContracts;
 
-public interface ICampaignRatingUpdatingService
+public interface ICampaignRatingUpdateService
 {
     Task<Result<CampaignRatingGetResponseDto>> UpdateCampaignRatingAsync(CampaignRatingUpdateRequestDto updateRequestDto, Guid userId);
 }

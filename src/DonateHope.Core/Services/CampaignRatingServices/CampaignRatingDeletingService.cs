@@ -12,7 +12,7 @@ public class CampaignRatingDeletingService(
     ILogger<CampaignRatingDeletingService> logger,
     ICampaignRatingsRepository campaignRatingsRepository,
     CampaignRatingMapper campaignRatingMapper
-    ) : ICampaignRatingDeletingService
+    ) : ICampaignRatingDeleteService
 {
     private readonly ILogger<CampaignRatingDeletingService> _logger = logger;
     private readonly ICampaignRatingsRepository _campaignRatingsRepository = campaignRatingsRepository;

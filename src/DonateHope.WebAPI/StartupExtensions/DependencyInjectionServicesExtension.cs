@@ -58,10 +58,10 @@ public static class DependencyInjectionServicesExtension
         
         services.TryAddScoped<ICampaignRatingsRepository, CampaignRatingsRepository>();
         services.TryAddSingleton<CampaignRatingMapper>();
-        services.TryAddScoped<ICampaignRatingCreatingService, CampaignRatingCreatingService>();
-        services.TryAddScoped<ICampaignRatingRetrievalService, CampaignRatingRetrievalService>();
-        services.TryAddScoped<ICampaignRatingUpdatingService, CampaignRatingUpdatingService>();
-        services.TryAddScoped<ICampaignRatingDeletingService, CampaignRatingDeletingService>();
+        services.TryAddScoped<ICampaignRatingCreateService, CampaignRatingCreatingService>();
+        services.TryAddScoped<ICampaignRatingRetrieveService, CampaignRatingRetrievalService>();
+        services.TryAddScoped<ICampaignRatingUpdateService, CampaignRatingUpdatingService>();
+        services.TryAddScoped<ICampaignRatingDeleteService, CampaignRatingDeletingService>();
         services.AddValidatorsFromAssemblyContaining<CampaignRatingUpdateRequestValidator>();
         
         return services;

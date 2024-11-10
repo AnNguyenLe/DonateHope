@@ -12,7 +12,7 @@ public class CampaignRatingRetrievalService(
     ILogger<CampaignRatingRetrievalService> logger,
     ICampaignRatingsRepository campaignRatingsRepository,
     CampaignRatingMapper campaignRatingMapper
-    ) : ICampaignRatingRetrievalService
+    ) : ICampaignRatingRetrieveService
 {
     private readonly ILogger<CampaignRatingRetrievalService> _logger = logger;
     private readonly ICampaignRatingsRepository _campaignRatingsRepository = campaignRatingsRepository;

@@ -3,7 +3,7 @@ using FluentResults;
 
 namespace DonateHope.Core.ServiceContracts.CampaignRatingsServiceContracts;
 
-public interface ICampaignRatingDeletingService
+public interface ICampaignRatingDeleteService
 {
     Task<Result<CampaignRatingDeleteResponseDto>> DeleteCampaignRatingAsync(Guid campaignRatingId, Guid deletedBy);
 }
