@@ -12,7 +12,7 @@ namespace DonateHope.Core.Services.CampaignsServices;
 public class CampaignCreatingService(
     ICampaignsRepository campaignsRepository,
     CampaignMapper campaignMapper
-) : ICampaignCreatingService
+) : ICampaignCreateService
 {
     private readonly ICampaignsRepository _campaignsRepository = campaignsRepository;
     private readonly CampaignMapper _campaignMapper = campaignMapper;

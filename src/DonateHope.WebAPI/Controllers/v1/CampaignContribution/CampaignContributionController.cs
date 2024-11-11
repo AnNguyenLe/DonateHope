@@ -16,7 +16,7 @@ namespace DonateHope.WebAPI.Controllers.v1.CampaignContribution;
 [Route("api/v{version:apiVersion}/campaign-contribution")]
 [ApiController]
 public class CampaignContributionController(
-    ICampaignContributionCreateService campaignContributionCreatingService,
+    ICampaignContributionCreateService campaignContributionCreateService,
     ICampaignContributionRetrieveService campaignContributionRetrieveService,
     ICampaignContributionUpdateService campaignContributionUpdateService,
     ICampaignContributionDeleteService campaignContributionDeleteService,
@@ -30,7 +30,7 @@ public class CampaignContributionController(
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
     private readonly MyAppServerConfiguration _app = myAppServerConfiguration.Value;
-    private readonly ICampaignContributionCreateService _campaignContributionCreateService = campaignContributionCreatingService;
+    private readonly ICampaignContributionCreateService _campaignContributionCreateService = campaignContributionCreateService;
     private readonly ICampaignContributionRetrieveService _campaignContributionRetrieveService = campaignContributionRetrieveService;
     private readonly ICampaignContributionUpdateService _campaignContributionUpdateService = campaignContributionUpdateService;
     private readonly ICampaignContributionDeleteService _campaignContributionDeleteService = campaignContributionDeleteService;
