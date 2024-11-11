@@ -8,13 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignRatingServices;
 
-public class CampaignRatingRetrievalService(
-    ILogger<CampaignRatingRetrievalService> logger,
+public class CampaignRatingRetrieveService(
+    ILogger<CampaignRatingRetrieveService> logger,
     ICampaignRatingsRepository campaignRatingsRepository,
     CampaignRatingMapper campaignRatingMapper
     ) : ICampaignRatingRetrieveService
 {
-    private readonly ILogger<CampaignRatingRetrievalService> _logger = logger;
+    private readonly ILogger<CampaignRatingRetrieveService> _logger = logger;
     private readonly ICampaignRatingsRepository _campaignRatingsRepository = campaignRatingsRepository;
     private readonly CampaignRatingMapper _campaignRatingMapper = campaignRatingMapper;
 

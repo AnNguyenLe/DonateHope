@@ -9,14 +9,14 @@ using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 
-public class CampaignContributionCreatingService(
-    ILogger<CampaignContributionCreatingService> logger,
+public class CampaignContributionCreateService(
+    ILogger<CampaignContributionCreateService> logger,
     ICampaignContributionsRepository campaignContributionsRepository,
     ICampaignsRepository campaignsRepository,
     CampaignContributionMapper campaignContributionMapper
     ) : ICampaignContributionCreateService
 {
-    private readonly ILogger<CampaignContributionCreatingService> _logger = logger;
+    private readonly ILogger<CampaignContributionCreateService> _logger = logger;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
     private readonly ICampaignsRepository _campaignsRepository = campaignsRepository;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;

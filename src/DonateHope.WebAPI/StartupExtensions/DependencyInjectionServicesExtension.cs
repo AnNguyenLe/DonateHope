@@ -43,25 +43,25 @@ public static class DependencyInjectionServicesExtension
 
         services.TryAddScoped<ICampaignsRepository, CampaignsRepository>();
         services.TryAddSingleton<CampaignMapper>();
-        services.TryAddScoped<ICampaignCreateService, CampaignCreatingService>();
-        services.TryAddScoped<ICampaignRetrieveService, CampaignRetrievalService>();
-        services.TryAddScoped<ICampaignUpdateService, CampaignUpdatingService>();
+        services.TryAddScoped<ICampaignCreateService, CampaignCreateService>();
+        services.TryAddScoped<ICampaignRetrieveService, CampaignRetrieveService>();
+        services.TryAddScoped<ICampaignUpdateService, CampaignUpdateService>();
         
         services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsRepository>();
         services.TryAddSingleton<CampaignContributionMapper>();
-        services.TryAddScoped<ICampaignContributionCreateService, CampaignContributionCreatingService>();
-        services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrievalService>();
-        services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdatingService>();
-        services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeletingService>();
+        services.TryAddScoped<ICampaignContributionCreateService, CampaignContributionCreateService>();
+        services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrieveService>();
+        services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdateService>();
+        services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeleteService>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionUpdateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
         
         services.TryAddScoped<ICampaignRatingsRepository, CampaignRatingsRepository>();
         services.TryAddSingleton<CampaignRatingMapper>();
-        services.TryAddScoped<ICampaignRatingCreateService, CampaignRatingCreatingService>();
-        services.TryAddScoped<ICampaignRatingRetrieveService, CampaignRatingRetrievalService>();
-        services.TryAddScoped<ICampaignRatingUpdateService, CampaignRatingUpdatingService>();
-        services.TryAddScoped<ICampaignRatingDeleteService, CampaignRatingDeletingService>();
+        services.TryAddScoped<ICampaignRatingCreateService, CampaignRatingCreateService>();
+        services.TryAddScoped<ICampaignRatingRetrieveService, CampaignRatingRetrieveService>();
+        services.TryAddScoped<ICampaignRatingUpdateService, CampaignRatingUpdateService>();
+        services.TryAddScoped<ICampaignRatingDeleteService, CampaignRatingDeleteService>();
         services.AddValidatorsFromAssemblyContaining<CampaignRatingUpdateRequestValidator>();
         
         return services;

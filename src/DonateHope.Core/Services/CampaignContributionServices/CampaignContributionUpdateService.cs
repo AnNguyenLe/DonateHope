@@ -8,13 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 
-public class CampaignContributionUpdatingService (
-    ILogger<CampaignContributionUpdatingService> logger,
+public class CampaignContributionUpdateService (
+    ILogger<CampaignContributionUpdateService> logger,
     CampaignContributionMapper campaignContributionMapper,
     ICampaignContributionsRepository campaignContributionsRepository
     ) : ICampaignContributionUpdateService
 {
-    private readonly ILogger<CampaignContributionUpdatingService> _logger = logger;
+    private readonly ILogger<CampaignContributionUpdateService> _logger = logger;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
 

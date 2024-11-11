@@ -10,13 +10,13 @@ using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 
-public class CampaignContributionDeletingService(
-    ILogger<CampaignContributionDeletingService> logger,
+public class CampaignContributionDeleteService(
+    ILogger<CampaignContributionDeleteService> logger,
     ICampaignContributionsRepository campaignContributionsRepository,
     CampaignContributionMapper campaignContributionMapper
     ) : ICampaignContributionDeleteService
 {
-    private readonly ILogger<CampaignContributionDeletingService> _logger = logger;
+    private readonly ILogger<CampaignContributionDeleteService> _logger = logger;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
 
