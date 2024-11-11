@@ -19,17 +19,17 @@ public class CampaignController(
     UserManager<AppUser> userManager,
     CampaignMapper campaignMapper,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
-    ICampaignCreatingService campaignCreatingService,
-    ICampaignRetrievalService campaignRetrievalService,
-    ICampaignUpdatingService campaignUpdatingService
+    ICampaignCreateService campaignCreateService,
+    ICampaignRetrieveService campaignRetrieveService,
+    ICampaignUpdateService campaignUpdateService
 ) : CustomControllerBase
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly CampaignMapper _campaignMapper = campaignMapper;
     private readonly MyAppServerConfiguration _app = myAppServerConfiguration.Value;
-    private readonly ICampaignCreatingService _campaignCreatingService = campaignCreatingService;
-    private readonly ICampaignRetrievalService _campaignRetrievalService = campaignRetrievalService;
-    private readonly ICampaignUpdatingService _campaignUpdatingService = campaignUpdatingService;
+    private readonly ICampaignCreateService _campaignCreateService = campaignCreateService;
+    private readonly ICampaignRetrieveService _campaignRetrieveService = campaignRetrieveService;
+    private readonly ICampaignUpdateService _campaignUpdateService = campaignUpdateService;
 
     [HttpPost("create", Name = nameof(CreateCampaign))]
     public async Task<ActionResult<CampaignGetResponseDto>> CreateCampaign(
@@ -48,7 +48,7 @@ public class CampaignController(
             return BadRequestProblemDetails("Unable to identify user.");
         }
 
-        var result = await _campaignCreatingService.CreateCampaignAsync(
+        var result = await _campaignCreateService.CreateCampaignAsync(
             createRequestDto,
             parsedUserId
         );
@@ -78,7 +78,7 @@ public class CampaignController(
             return BadRequestProblemDetails("Invalid ID format");
         }
 
-        var result = await _campaignRetrievalService.GetCampaignByIdAsync(campaignId);
+        var result = await _campaignRetrieveService.GetCampaignByIdAsync(campaignId);
 
         if (result.IsFailed)
         {
@@ -116,7 +116,7 @@ public class CampaignController(
             return BadRequestProblemDetails("Unable to identify user.");
         }
 
-        var updateResult = await _campaignUpdatingService.UpdateCampaignAsync(
+        var updateResult = await _campaignUpdateService.UpdateCampaignAsync(
             updateRequestDto,
             parsedUserId
         );

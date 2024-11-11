@@ -1,18 +1,21 @@
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.Authentication;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
+using DonateHope.Core.ServiceContracts.CampaignRatingsServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignCommentServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Core.ServiceContracts.Email;
 using DonateHope.Core.ServiceContracts.HtmlTemplate;
 using DonateHope.Core.Services.Authentication;
 using DonateHope.Core.Services.CampaignContributionServices;
+using DonateHope.Core.Services.CampaignRatingServices;
 using DonateHope.Core.Services.CampaignsServices;
 using DonateHope.Core.Services.CampaignCommentsServices;
 using DonateHope.Core.Services.EmailService;
 using DonateHope.Core.Services.HtmlTemplate;
 using DonateHope.Core.Validators.Authentication;
 using DonateHope.Core.Validators.CampaignContribution;
+using DonateHope.Core.Validators.CampaignRating;
 using DonateHope.Domain.RepositoryContracts;
 using DonateHope.Infrastructure.Data;
 using DonateHope.Infrastructure.Repositories;
@@ -46,7 +49,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
         services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
         services.TryAddScoped<ICampaignUpdatingService, CampaignUpdatingService>();
-
+        
         services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsesRepository>();
         services.TryAddSingleton<CampaignContributionMapper>();
         services.TryAddScoped<ICampaignContributionCreatingService, CampaignContributionCreatingService>();
@@ -54,11 +57,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
         services.TryAddScoped<ICampaignContributionDeletingService, CampaignContributionDeletingService>();
 
-        services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>(); services.TryAddScoped<ICampaignCommentCreatingService, CampaignCommentCreatingService>();
-        services.TryAddScoped<ICampaignCommentRetrievalService, CampaignCommentRetrievalService>();
-        services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
-        services.TryAddScoped<ICampaignCommentsRepository, CampaignCommentsRepository>();
-        services.TryAddSingleton<CampaignCommentMapper>();
+        services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
         return services;
     }
 }

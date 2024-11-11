@@ -6,14 +6,17 @@ using DonateHope.Core.Validators.CampaignContribution;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
 using FluentValidation;
+using Microsoft.Extensions.Logging;
 
 namespace DonateHope.Core.Services.CampaignContributionServices;
 
-public class CampaignContributionDeletingService(
+public class CampaignContributionDeleteService(
+    ILogger<CampaignContributionDeleteService> logger,
     ICampaignContributionsRepository campaignContributionsRepository,
     CampaignContributionMapper campaignContributionMapper
-    ) : ICampaignContributionDeletingService
+    ) : ICampaignContributionDeleteService
 {
+    private readonly ILogger<CampaignContributionDeleteService> _logger = logger;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
 
@@ -23,16 +26,21 @@ public class CampaignContributionDeletingService(
         string reasonForDeletion 
         )
     {
-        var queryResult =
-            await _campaignContributionsRepository.GetCampaignContributionById(campaignContributionId);
+        var queryResult = await _campaignContributionsRepository.GetCampaignContributionById(campaignContributionId);
         if (queryResult.IsFailed || queryResult.ValueOrDefault is null)
         {
+            _logger.LogWarning(
+                "Failed to retrieve campaign contribution {CampaignContributionId}. Error: {ErrorMessage}",
+                campaignContributionId,
+                queryResult.Errors.First().Message
+                );
             return new ProblemDetailsError(queryResult.Errors.First().Message);
         }
         
         var deletedCampaignContribution = queryResult.Value;
         if (deletedCampaignContribution.IsDeleted)
         {
+            _logger.LogWarning("The campaign contribution {CampaignContributionId} is already marked as deleted.", deletedCampaignContribution.Id);
             return new ProblemDetailsError("This campaign contribution does not exist.");
         }
         
@@ -48,9 +56,16 @@ public class CampaignContributionDeletingService(
 
         if (deletedResult.IsFailed)
         {
+            _logger.LogWarning(
+                "Failed to delete campaign contribution {CampaignContributionId}. Error: {ErrorMessage}",
+                campaignContributionId,
+                deletedResult.Errors.First().Message
+                );
             return new ProblemDetailsError("Failed to delete campaign contribution.");
         }
         
+        _logger.LogInformation(
+            "Successfully deleted campaign contribution {CampaignContributionId}", campaignContributionId);
         return _campaignContributionMapper.MapCampaignContributionToCampaignContributionDeleteResponseDto(deletedCampaignContribution);
     }
 }
