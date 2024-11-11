@@ -21,13 +21,13 @@ public class CampaignContributionUpdateRequestValidator : AbstractValidator<Camp
             .WithMessage("ContributionMethod is not valid.");
     }
 
-    private bool BeAValidUnitOfMeasurement(string unitOfMeasurement)
+    private bool BeAValidUnitOfMeasurement(string? unitOfMeasurement)
     {
         return Enum.TryParse(typeof(MeasurementUnits), unitOfMeasurement, true, out var result) &&
                Enum.IsDefined(typeof(MeasurementUnits), result);
     }
 
-    public bool BeAValidContributionMethod(string contributionMethod)
+    public bool BeAValidContributionMethod(string? contributionMethod)
     {
         return Enum.TryParse(typeof(ContributionMethods), contributionMethod, true, out var result) &&
                Enum.IsDefined(typeof(ContributionMethods), result);

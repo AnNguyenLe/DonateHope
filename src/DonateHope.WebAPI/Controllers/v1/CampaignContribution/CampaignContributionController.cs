@@ -16,10 +16,10 @@ namespace DonateHope.WebAPI.Controllers.v1.CampaignContribution;
 [Route("api/v{version:apiVersion}/campaign-contribution")]
 [ApiController]
 public class CampaignContributionController(
-    ICampaignContributionCreatingService campaignContributionCreatingService,
-    ICampaignContributionRetrievalService campaignContributionRetrievalService,
-    ICampaignContributionUpdatingService campaignContributionUpdatingService,
-    ICampaignContributionDeletingService campaignContributionDeletingService,
+    ICampaignContributionCreateService campaignContributionCreateService,
+    ICampaignContributionRetrieveService campaignContributionRetrieveService,
+    ICampaignContributionUpdateService campaignContributionUpdateService,
+    ICampaignContributionDeleteService campaignContributionDeleteService,
     IValidator<CampaignContributionDeleteRequestDto> campaignContributionDeleteRequestValidator,
     IValidator<CampaignContributionUpdateRequestDto> campaignContributionUpdateRequestValidator,
     UserManager<AppUser> userManager,
@@ -30,10 +30,10 @@ public class CampaignContributionController(
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;
     private readonly MyAppServerConfiguration _app = myAppServerConfiguration.Value;
-    private readonly ICampaignContributionCreatingService _campaignContributionCreatingService = campaignContributionCreatingService;
-    private readonly ICampaignContributionRetrievalService _campaignContributionRetrievalService = campaignContributionRetrievalService;
-    private readonly ICampaignContributionUpdatingService _campaignContributionUpdatingService = campaignContributionUpdatingService;
-    private readonly ICampaignContributionDeletingService _campaignContributionDeletingService = campaignContributionDeletingService;
+    private readonly ICampaignContributionCreateService _campaignContributionCreateService = campaignContributionCreateService;
+    private readonly ICampaignContributionRetrieveService _campaignContributionRetrieveService = campaignContributionRetrieveService;
+    private readonly ICampaignContributionUpdateService _campaignContributionUpdateService = campaignContributionUpdateService;
+    private readonly ICampaignContributionDeleteService _campaignContributionDeleteService = campaignContributionDeleteService;
     private readonly IValidator<CampaignContributionUpdateRequestDto> _campaignContributionUpdateValidator = campaignContributionUpdateRequestValidator;
     private readonly IValidator<CampaignContributionDeleteRequestDto> _campaignContributionDeleteValidator = campaignContributionDeleteRequestValidator;
 
@@ -52,7 +52,7 @@ public class CampaignContributionController(
             return BadRequestProblemDetails("Unable to identify user");
         }
         
-        var result = await _campaignContributionCreatingService.CreateCampaignContributionAsync(
+        var result = await _campaignContributionCreateService.CreateCampaignContributionAsync(
             createRequest,
             parsedUserId
             );
@@ -79,7 +79,7 @@ public class CampaignContributionController(
         {
             return BadRequestProblemDetails("Unable to identify user");
         }
-        var result = await _campaignContributionRetrievalService.GetCampaignContributionByIdAsync(id);
+        var result = await _campaignContributionRetrieveService.GetCampaignContributionByIdAsync(id);
 
         if (result.IsFailed)
         {
@@ -124,7 +124,7 @@ public class CampaignContributionController(
             return BadRequestProblemDetails("Unable to identify user.");
         }
 
-        var updatedResult = await _campaignContributionUpdatingService.UpdateCampaignContributionAsync(
+        var updatedResult = await _campaignContributionUpdateService.UpdateCampaignContributionAsync(
             updateRequestDto,
             parsedUserId
         );
@@ -171,7 +171,7 @@ public class CampaignContributionController(
             return BadRequestProblemDetails("Invalid user identification");
         }
         
-        var result = await _campaignContributionDeletingService.DeleteCampaignContributionAsync(
+        var result = await _campaignContributionDeleteService.DeleteCampaignContributionAsync(
             campaignContributionId,
             deletedBy,
             reasonForDeletionRequestDto.ReasonForDeletion
