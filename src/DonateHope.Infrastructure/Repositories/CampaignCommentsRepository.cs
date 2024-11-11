@@ -97,6 +97,8 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
                     content = @Content, 
                     updated_at = @UpdatedAt,
                     updated_by = @UpdatedBy,
+                    campaign_id = @CampaignId,
+                    user_id = @UserId
                 WHERE
                     id = @Id;
             """;

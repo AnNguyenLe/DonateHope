@@ -39,4 +39,3 @@ public partial class CampaignCommentMapper
     [MapperIgnoreTarget(nameof(CampaignComment.CampaignId))]
     public partial CampaignComment MapCampaignCommentUpdateRequestDtoToCampaignComment(CampaignCommentUpdateRequestDto dto);
 }
-    

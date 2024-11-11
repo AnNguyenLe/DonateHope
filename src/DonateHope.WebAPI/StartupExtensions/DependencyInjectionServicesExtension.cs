@@ -46,18 +46,24 @@ public static class DependencyInjectionServicesExtension
 
         services.TryAddScoped<ICampaignsRepository, CampaignsRepository>();
         services.TryAddSingleton<CampaignMapper>();
-        services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
-        services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
-        services.TryAddScoped<ICampaignUpdatingService, CampaignUpdatingService>();
-        
-        services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsesRepository>();
+        services.TryAddScoped<ICampaignCreateService, CampaignCreateService>();
+        services.TryAddScoped<ICampaignRetrieveService, CampaignRetrieveService>();
+        services.TryAddScoped<ICampaignUpdateService, CampaignUpdateService>();
+
+        services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsRepository>();
         services.TryAddSingleton<CampaignContributionMapper>();
-        services.TryAddScoped<ICampaignContributionCreatingService, CampaignContributionCreatingService>();
-        services.TryAddScoped<ICampaignContributionRetrievalService, CampaignContributionRetrievalService>();
-        services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
-        services.TryAddScoped<ICampaignContributionDeletingService, CampaignContributionDeletingService>();
+        services.TryAddScoped<ICampaignContributionCreateService, CampaignContributionCreateService>();
+        services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrieveService>();
+        services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdateService>();
+        services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeleteService>();
 
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
+        services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
+        services.TryAddScoped<ICampaignCommentCreatingService, CampaignCommentCreatingService>();
+        services.TryAddScoped<ICampaignCommentRetrievalService, CampaignCommentRetrievalService>();
+        services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
+        services.TryAddSingleton<ICampaignCommentsRepository, CampaignCommentsRepository>();
+        services.TryAddSingleton<CampaignCommentMapper>();
         return services;
     }
 }

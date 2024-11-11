@@ -24,10 +24,10 @@ public class CampaignCommentUpdateService(
     {
         var queryResult = await _campaignCommentsRepository.GetCampaignCommentById(updateCommentRequestDto.Id);
 
-        if (queryResult.IsFailed || queryResult.ValueOrDefault is null)
-        {
-            return new ProblemDetailsError("Campaign Comment not available.");
-        }
+        // if (queryResult.IsFailed || queryResult.ValueOrDefault is null)
+        // {
+        //     return new ProblemDetailsError("Campaign Comment not available.");
+        // }
 
         var currentCampaignComment = queryResult.Value;
 
@@ -39,11 +39,10 @@ public class CampaignCommentUpdateService(
         var updatedCampaignComment = _campaignCommentMapper.MapCampaignCommentUpdateRequestDtoToCampaignComment(
             updateCommentRequestDto
         );
-        // updatedCampaignComment.UserId = userId;
-        // updatedCampaignComment.CampaignId = currentCampaignComment.CampaignId;
-        updatedCampaignComment.Content = updateCommentRequestDto.Content;
+        updatedCampaignComment.UserId = userId;
+        updatedCampaignComment.CampaignId = currentCampaignComment.CampaignId;
         updatedCampaignComment.UpdatedAt = DateTime.UtcNow;
-        // updatedCampaignComment.UpdatedBy = userId;
+        updatedCampaignComment.UpdatedBy = userId;
 
         var updateResult = await _campaignCommentsRepository.UpdateCampaignComment(updatedCampaignComment);
         if (updateResult.IsFailed)
