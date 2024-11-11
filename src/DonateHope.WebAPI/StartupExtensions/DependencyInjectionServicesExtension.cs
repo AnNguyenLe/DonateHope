@@ -46,7 +46,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
         services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
         services.TryAddScoped<ICampaignUpdatingService, CampaignUpdatingService>();
-        
+
         services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsesRepository>();
         services.TryAddSingleton<CampaignContributionMapper>();
         services.TryAddScoped<ICampaignContributionCreatingService, CampaignContributionCreatingService>();
@@ -54,10 +54,10 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
         services.TryAddScoped<ICampaignContributionDeletingService, CampaignContributionDeletingService>();
 
-        services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();        services.TryAddScoped<ICampaignCommentCreatingService, CampaignCommentCreatingService>();
+        services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>(); services.TryAddScoped<ICampaignCommentCreatingService, CampaignCommentCreatingService>();
         services.TryAddScoped<ICampaignCommentRetrievalService, CampaignCommentRetrievalService>();
         services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
-        services.TryAddSingleton<ICampaignCommentsRepository, CampaignCommentsRepository>();
+        services.TryAddScoped<ICampaignCommentsRepository, CampaignCommentsRepository>();
         services.TryAddSingleton<CampaignCommentMapper>();
         return services;
     }
