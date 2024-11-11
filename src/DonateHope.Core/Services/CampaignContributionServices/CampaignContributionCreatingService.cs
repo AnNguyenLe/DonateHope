@@ -14,7 +14,7 @@ public class CampaignContributionCreatingService(
     ICampaignContributionsRepository campaignContributionsRepository,
     ICampaignsRepository campaignsRepository,
     CampaignContributionMapper campaignContributionMapper
-    ) : ICampaignContributionCreatingService
+    ) : ICampaignContributionCreateService
 {
     private readonly ILogger<CampaignContributionCreatingService> _logger = logger;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;

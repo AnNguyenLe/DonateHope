@@ -49,10 +49,10 @@ public static class DependencyInjectionServicesExtension
         
         services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsRepository>();
         services.TryAddSingleton<CampaignContributionMapper>();
-        services.TryAddScoped<ICampaignContributionCreatingService, CampaignContributionCreatingService>();
-        services.TryAddScoped<ICampaignContributionRetrievalService, CampaignContributionRetrievalService>();
-        services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
-        services.TryAddScoped<ICampaignContributionDeletingService, CampaignContributionDeletingService>();
+        services.TryAddScoped<ICampaignContributionCreateService, CampaignContributionCreatingService>();
+        services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrievalService>();
+        services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdatingService>();
+        services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeletingService>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionUpdateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
         

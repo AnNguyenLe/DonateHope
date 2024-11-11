@@ -12,7 +12,7 @@ public class CampaignContributionUpdatingService (
     ILogger<CampaignContributionUpdatingService> logger,
     CampaignContributionMapper campaignContributionMapper,
     ICampaignContributionsRepository campaignContributionsRepository
-    ) : ICampaignContributionUpdatingService
+    ) : ICampaignContributionUpdateService
 {
     private readonly ILogger<CampaignContributionUpdatingService> _logger = logger;
     private readonly CampaignContributionMapper _campaignContributionMapper = campaignContributionMapper;

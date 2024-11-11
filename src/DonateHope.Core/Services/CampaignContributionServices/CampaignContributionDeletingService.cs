@@ -14,7 +14,7 @@ public class CampaignContributionDeletingService(
     ILogger<CampaignContributionDeletingService> logger,
     ICampaignContributionsRepository campaignContributionsRepository,
     CampaignContributionMapper campaignContributionMapper
-    ) : ICampaignContributionDeletingService
+    ) : ICampaignContributionDeleteService
 {
     private readonly ILogger<CampaignContributionDeletingService> _logger = logger;
     private readonly ICampaignContributionsRepository _campaignContributionsRepository = campaignContributionsRepository;
