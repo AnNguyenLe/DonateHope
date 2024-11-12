@@ -2,18 +2,21 @@ using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.Authentication;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignRatingsServiceContracts;
+using DonateHope.Core.ServiceContracts.CampaignReportsServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Core.ServiceContracts.Email;
 using DonateHope.Core.ServiceContracts.HtmlTemplate;
 using DonateHope.Core.Services.Authentication;
 using DonateHope.Core.Services.CampaignContributionServices;
 using DonateHope.Core.Services.CampaignRatingServices;
+using DonateHope.Core.Services.CampaignReportServices;
 using DonateHope.Core.Services.CampaignsServices;
 using DonateHope.Core.Services.EmailService;
 using DonateHope.Core.Services.HtmlTemplate;
 using DonateHope.Core.Validators.Authentication;
 using DonateHope.Core.Validators.CampaignContribution;
 using DonateHope.Core.Validators.CampaignRating;
+using DonateHope.Core.Validators.CampaignReport;
 using DonateHope.Domain.RepositoryContracts;
 using DonateHope.Infrastructure.Data;
 using DonateHope.Infrastructure.Repositories;
@@ -63,6 +66,15 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignRatingUpdateService, CampaignRatingUpdateService>();
         services.TryAddScoped<ICampaignRatingDeleteService, CampaignRatingDeleteService>();
         services.AddValidatorsFromAssemblyContaining<CampaignRatingUpdateRequestValidator>();
+        
+        services.TryAddScoped<ICampaignReportsRepository, CampaignReportsRepository>();
+        services.TryAddSingleton<CampaignReportMapper>();
+        services.TryAddScoped<ICampaignReportCreateService, CampaignReportCreateService>();
+        services.TryAddScoped<ICampaignReportRetrieveService, CampaignReportRetrieveService>();
+        services.TryAddScoped<ICampaignReportUpdateService, CampaignReportUpdateService>();
+        services.TryAddScoped<ICampaignReportDeleteService, CampaignReportDeleteService>();
+        services.AddValidatorsFromAssemblyContaining<CampaignReportUpdateRequestValidator>();
+        services.AddValidatorsFromAssemblyContaining<CampaignReportDeleteRequestValidator>();
         
         return services;
     }
