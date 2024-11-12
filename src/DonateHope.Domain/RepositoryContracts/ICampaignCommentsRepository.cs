@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using DonateHope.Domain.Entities;
 using FluentResults;
 
@@ -7,8 +8,9 @@ public interface ICampaignCommentsRepository
 {
     Task<int> AddCampaignComment(CampaignComment campaignComment);
     Task<Result<CampaignComment>> GetCampaignCommentById(Guid campaignCommentId);
-    Task<IEnumerable<CampaignComment>> GetCampaignComments();
-    Task<IEnumerable<CampaignComment>> GetCampaignComments(Func<CampaignComment, bool> predicate);
+    IQueryable<CampaignComment> GetCampaignComments(Expression<Func<CampaignComment, bool>> predicate);
     Task<Result<int>> UpdateCampaignComment(CampaignComment updatedCampaignComment);
-    Task<int> DeleteCampaignComment(Guid campaignCommentId);
+    Task<Result<int>> DeleteCampaignComment(Guid campaignCommentId, Guid deleteBy, string reasonForDeletion);
+    Task<Result<int>> DeleteCampaignCommentPermanently(Guid campaignCommentId);
+
 }

@@ -4,7 +4,7 @@ using FluentResults;
 
 namespace DonateHope.Core.ServiceContracts.CampaignCommentServiceContracts;
 
-public interface ICampaignCommentCreatingService
+public interface ICampaignCommentCreateService
 {
     Task<Result<CampaignComment>> CreateCampaignCommentAsync(
         CampaignCommentCreateRequestDto campaignCommentCreateRequestDto,

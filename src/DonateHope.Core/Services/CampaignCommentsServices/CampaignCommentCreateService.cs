@@ -9,10 +9,10 @@ using FluentResults;
 
 namespace DonateHope.Core.Services.CampaignCommentsServices;
 
-public class CampaignCommentCreatingService(
+public class CampaignCommentCreateService(
     ICampaignCommentsRepository campaignCommentsRepository,
     CampaignCommentMapper campaignCommentMapper
-) : ICampaignCommentCreatingService
+) : ICampaignCommentCreateService
 {
     private readonly ICampaignCommentsRepository _campaignCommentsRepository = campaignCommentsRepository;
     private readonly CampaignCommentMapper _campaignCommentMapper = campaignCommentMapper;
@@ -29,7 +29,7 @@ public class CampaignCommentCreatingService(
         var affectedRows = await _campaignCommentsRepository.AddCampaignComment(campaignComment);
         if (affectedRows == 0)
         {
-            return new ProblemDetailsError("Failed to create campaign");
+            return new ProblemDetailsError("Failed to create campaign comment");
         }
         return campaignComment;
     }

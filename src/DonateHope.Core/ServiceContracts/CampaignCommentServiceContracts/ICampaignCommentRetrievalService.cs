@@ -3,7 +3,7 @@ using FluentResults;
 
 namespace DonateHope.Core.ServiceContracts.CampaignCommentServiceContracts;
 
-public interface ICampaignCommentRetrievalService
+public interface ICampaignCommentRetrieveService
 {
-    Task<Result<CampaignCommentGetResponseDto>> GetCampaignCommentById(string campaignCommentId);
+    Task<Result<CampaignCommentGetResponseDto>> GetCampaignCommentById(Guid campaignCommentId);
 }

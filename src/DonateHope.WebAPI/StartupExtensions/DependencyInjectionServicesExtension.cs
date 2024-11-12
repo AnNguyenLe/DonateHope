@@ -8,6 +8,7 @@ using DonateHope.Core.ServiceContracts.Email;
 using DonateHope.Core.ServiceContracts.HtmlTemplate;
 using DonateHope.Core.Services.Authentication;
 using DonateHope.Core.Services.CampaignContributionServices;
+using DonateHope.Core.Services.CampaignCommentServices;
 using DonateHope.Core.Services.CampaignRatingServices;
 using DonateHope.Core.Services.CampaignsServices;
 using DonateHope.Core.Services.CampaignCommentsServices;
@@ -59,10 +60,11 @@ public static class DependencyInjectionServicesExtension
 
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
-        services.TryAddScoped<ICampaignCommentCreatingService, CampaignCommentCreatingService>();
-        services.TryAddScoped<ICampaignCommentRetrievalService, CampaignCommentRetrievalService>();
+        services.TryAddScoped<ICampaignCommentCreateService, CampaignCommentCreateService>();
+        services.TryAddScoped<ICampaignCommentRetrieveService, CampaignCommentRetrieveService>();
         services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
-        services.TryAddSingleton<ICampaignCommentsRepository, CampaignCommentsRepository>();
+        services.TryAddScoped<ICampaignCommentDeleteService, CampaignCommentDeleteService>();
+        services.TryAddScoped<ICampaignCommentsRepository, CampaignCommentsRepository>();
         services.TryAddSingleton<CampaignCommentMapper>();
         return services;
     }
