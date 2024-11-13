@@ -2,5 +2,7 @@ namespace DonateHope.Domain.Enums;
 
 public enum MeasurementUnits
 {
-    Cash
+    Vnd,
+    Usd,
+    Others
 }

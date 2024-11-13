@@ -22,6 +22,7 @@ public class Campaign : ITraceable, IActiveStatus
     public double AverageRatingPoint { get; set; }
     public decimal SpendingAmount { get; set; }
     public string? ProofsUrl { get; set; }
+    public bool IsPublished { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? CreatedBy { get; set; }
@@ -29,11 +30,12 @@ public class Campaign : ITraceable, IActiveStatus
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
     public Guid? DeletedBy { get; set; }
+    public string? ReasonForDeletion { get; set; }
     public bool IsActive { get; set; }
     public string? ActiveStatusNote { get; set; }
     public Guid UserId { get; set; }
     public AppUser? User { get; set; }
-    public int CampaignStatusId { get; set; }
+    public Guid? CampaignStatusId { get; set; }
     public CampaignStatus? CampaignStatus { get; set; }
     public List<CampaignRating>? CampaignRatings { get; set; }
     public List<CampaignComment>? CampaignComments { get; set; }

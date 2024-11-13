@@ -8,6 +8,7 @@ using DonateHope.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.VisualBasic;
 
 namespace DonateHope.WebAPI.Controllers.v1.Campaign;
 
@@ -15,32 +16,42 @@ namespace DonateHope.WebAPI.Controllers.v1.Campaign;
 [Route("api/v{version:apiVersion}/campaign")]
 [ApiController]
 public class CampaignController(
-    ICampaignCreatingService campaignCreatingService,
-    ICampaignRetrievalService campaignRetrievalService,
     UserManager<AppUser> userManager,
+    CampaignMapper campaignMapper,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
-    CampaignMapper campaignMapper
-) : ControllerBase
+    ICampaignCreateService campaignCreateService,
+    ICampaignRetrieveService campaignRetrieveService,
+    ICampaignUpdateService campaignUpdateService
+) : CustomControllerBase
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly CampaignMapper _campaignMapper = campaignMapper;
     private readonly MyAppServerConfiguration _app = myAppServerConfiguration.Value;
-    private readonly ICampaignCreatingService _campaignCreatingService = campaignCreatingService;
-    private readonly ICampaignRetrievalService _campaignRetrievalService = campaignRetrievalService;
+    private readonly ICampaignCreateService _campaignCreateService = campaignCreateService;
+    private readonly ICampaignRetrieveService _campaignRetrieveService = campaignRetrieveService;
+    private readonly ICampaignUpdateService _campaignUpdateService = campaignUpdateService;
 
     [HttpPost("create", Name = nameof(CreateCampaign))]
-    public async Task<ActionResult<string>> CreateCampaign(
-        [FromBody] CampaignCreateRequestDto createRequest
+    public async Task<ActionResult<CampaignGetResponseDto>> CreateCampaign(
+        [FromBody] CampaignCreateRequestDto createRequestDto
     )
     {
         var userId = _userManager.GetUserId(User);
 
         if (userId is null)
         {
-            return Problem("Unable to identify user.");
+            return BadRequestProblemDetails("Unable to identify user.");
         }
 
-        var result = await _campaignCreatingService.CreateCampaignAsync(createRequest, userId);
+        if (!Guid.TryParse(userId, out var parsedUserId))
+        {
+            return BadRequestProblemDetails("Unable to identify user.");
+        }
+
+        var result = await _campaignCreateService.CreateCampaignAsync(
+            createRequestDto,
+            parsedUserId
+        );
 
         if (result.IsFailed)
         {
@@ -49,11 +60,7 @@ public class CampaignController(
 
         var campaign = result.Value;
 
-        return CreatedAtRoute(
-            nameof(GetCampaign),
-            new { id = campaign.Id },
-            _campaignMapper.MapCampaignToCampaignGetResponseDto(campaign)
-        );
+        return CreatedAtRoute(nameof(GetCampaign), new { id = campaign.Id }, campaign);
     }
 
     [HttpGet("{id}", Name = nameof(GetCampaign))]
@@ -63,10 +70,15 @@ public class CampaignController(
 
         if (userId is null)
         {
-            return Problem("Unable to identify user.");
+            return BadRequestProblemDetails("Unable to identify user.");
         }
 
-        var result = await _campaignRetrievalService.GetCampaignById(id);
+        if (!Guid.TryParse(id, out var campaignId))
+        {
+            return BadRequestProblemDetails("Invalid ID format");
+        }
+
+        var result = await _campaignRetrieveService.GetCampaignByIdAsync(campaignId);
 
         if (result.IsFailed)
         {
@@ -74,5 +86,46 @@ public class CampaignController(
         }
 
         return result.Value;
+    }
+
+    [HttpPut("{id}", Name = nameof(UpdateCampaign))]
+    public async Task<ActionResult<CampaignGetResponseDto>> UpdateCampaign(
+        [FromRoute] string id,
+        [FromBody] CampaignUpdateRequestDto updateRequestDto
+    )
+    {
+        if (!Guid.TryParse(id, out var campaignId))
+        {
+            return BadRequestProblemDetails("Invalid ID format.");
+        }
+
+        if (campaignId != updateRequestDto.Id)
+        {
+            return BadRequestProblemDetails("Campaign ID does not match.");
+        }
+
+        var userId = _userManager.GetUserId(User);
+
+        if (userId is null)
+        {
+            return BadRequestProblemDetails("Unable to identify user.");
+        }
+
+        if (!Guid.TryParse(userId, out var parsedUserId))
+        {
+            return BadRequestProblemDetails("Unable to identify user.");
+        }
+
+        var updateResult = await _campaignUpdateService.UpdateCampaignAsync(
+            updateRequestDto,
+            parsedUserId
+        );
+
+        if (updateResult.IsFailed)
+        {
+            return updateResult.Errors.ToDetailedBadRequest();
+        }
+
+        return NoContent();
     }
 }

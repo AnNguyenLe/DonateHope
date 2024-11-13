@@ -86,8 +86,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         modelBuilder
             .Entity<Campaign>()
             .HasOne<CampaignStatus>()
-            .WithOne(cs => cs.Campaign)
-            .HasForeignKey<Campaign>(c => c.CampaignStatusId);
+            .WithMany(cs => cs.Campaigns)
+            .HasForeignKey(c => c.CampaignStatusId);
 
         // campaign_ratings table
         modelBuilder.Entity<CampaignRating>().HasKey(r => r.Id);
@@ -151,6 +151,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         // campaign_statuses table
         modelBuilder.Entity<CampaignStatus>().HasKey(cs => cs.Id);
-        modelBuilder.Entity<CampaignStatus>().Ignore(cs => cs.Campaign);
     }
 }
