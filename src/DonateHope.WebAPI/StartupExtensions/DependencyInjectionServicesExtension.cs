@@ -73,7 +73,6 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignReportRetrieveService, CampaignReportRetrieveService>();
         services.TryAddScoped<ICampaignReportUpdateService, CampaignReportUpdateService>();
         services.TryAddScoped<ICampaignReportDeleteService, CampaignReportDeleteService>();
-        services.AddValidatorsFromAssemblyContaining<CampaignReportUpdateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignReportDeleteRequestValidator>();
         
         return services;
