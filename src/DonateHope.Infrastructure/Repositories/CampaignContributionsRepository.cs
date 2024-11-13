@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DonateHope.Infrastructure.Repositories;
 
-public class CampaignContributionsesRepository(
+public class CampaignContributionsRepository(
     IDbConnectionFactory dbConnectionFactory,
     ApplicationDbContext applicationDbContext
     ) : ICampaignContributionsRepository
