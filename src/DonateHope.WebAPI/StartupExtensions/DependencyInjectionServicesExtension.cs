@@ -8,6 +8,7 @@ using DonateHope.Core.ServiceContracts.Email;
 using DonateHope.Core.ServiceContracts.HtmlTemplate;
 using DonateHope.Core.Services.Authentication;
 using DonateHope.Core.Services.CampaignContributionServices;
+using DonateHope.Core.Services.CampaignRatingServices;
 using DonateHope.Core.Services.CampaignCommentServices;
 using DonateHope.Core.Services.CampaignRatingServices;
 using DonateHope.Core.Services.CampaignsServices;
@@ -47,25 +48,18 @@ public static class DependencyInjectionServicesExtension
 
         services.TryAddScoped<ICampaignsRepository, CampaignsRepository>();
         services.TryAddSingleton<CampaignMapper>();
-        services.TryAddScoped<ICampaignCreateService, CampaignCreateService>();
-        services.TryAddScoped<ICampaignRetrieveService, CampaignRetrieveService>();
-        services.TryAddScoped<ICampaignUpdateService, CampaignUpdateService>();
-
-        services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsRepository>();
+        services.TryAddScoped<ICampaignCreatingService, CampaignCreatingService>();
+        services.TryAddScoped<ICampaignRetrievalService, CampaignRetrievalService>();
+        services.TryAddScoped<ICampaignUpdatingService, CampaignUpdatingService>();
+        
+        services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsesRepository>();
         services.TryAddSingleton<CampaignContributionMapper>();
-        services.TryAddScoped<ICampaignContributionCreateService, CampaignContributionCreateService>();
-        services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrieveService>();
-        services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdateService>();
-        services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeleteService>();
+        services.TryAddScoped<ICampaignContributionCreatingService, CampaignContributionCreatingService>();
+        services.TryAddScoped<ICampaignContributionRetrievalService, CampaignContributionRetrievalService>();
+        services.TryAddScoped<ICampaignContributionUpdatingService, CampaignContributionUpdatingService>();
+        services.TryAddScoped<ICampaignContributionDeletingService, CampaignContributionDeletingService>();
 
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
-        services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
-        services.TryAddScoped<ICampaignCommentCreateService, CampaignCommentCreateService>();
-        services.TryAddScoped<ICampaignCommentRetrieveService, CampaignCommentRetrieveService>();
-        services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
-        services.TryAddScoped<ICampaignCommentDeleteService, CampaignCommentDeleteService>();
-        services.TryAddScoped<ICampaignCommentsRepository, CampaignCommentsRepository>();
-        services.TryAddSingleton<CampaignCommentMapper>();
         return services;
     }
 }
