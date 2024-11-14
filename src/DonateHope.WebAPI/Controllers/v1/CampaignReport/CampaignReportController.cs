@@ -5,6 +5,7 @@ using DonateHope.Core.DTOs.CampaignReportDTOs;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignReportsServiceContracts;
 using DonateHope.Domain.IdentityEntities;
+using FluentResults;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -133,11 +134,8 @@ public class CampaignReportController(
         {
             return updatedResult.Errors.ToDetailedBadRequest();
         }
-        
-        return CreatedAtRoute(
-            nameof(UpdateCampaignReport),
-            new { id = campaignReportId },
-            updatedResult.Value);
+
+        return NoContent();
     }
 
     [HttpDelete("{id}", Name = nameof(DeleteCampaignReport))]
@@ -181,6 +179,6 @@ public class CampaignReportController(
         {
             return result.Errors.ToDetailedBadRequest();
         }
-        return result.Value;
+        return NoContent();
     }
 }

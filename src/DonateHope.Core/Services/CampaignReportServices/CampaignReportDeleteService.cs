@@ -42,10 +42,6 @@ public class CampaignReportDeleteService(
             return new ProblemDetailsError("This campaign report does not exist.");
         }
         
-        deletedCampaignReport.DeletedAt = DateTime.UtcNow;
-        deletedCampaignReport.DeletedBy = deletedBy;
-        deletedCampaignReport.ReasonForDeletion = reasonForDeletion;
-        
         var deletedResult = await _campaignReportsRepository.DeleteCampaignReport(
             campaignReportId,
             deletedBy,
@@ -61,9 +57,7 @@ public class CampaignReportDeleteService(
                 );
             return new ProblemDetailsError("Failed to delete campaign report.");
         }
-        
-        _logger.LogInformation(
-            "Successfully deleted campaign report {CampaignReportId}", campaignReportId);
-        return _campaignReportMapper.MapCampaignReportToCampaignReportDeleteResponseDto(deletedCampaignReport);
+
+        return Result.Ok();
     }
 }

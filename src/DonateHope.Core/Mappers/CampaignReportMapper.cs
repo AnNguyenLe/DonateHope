@@ -29,8 +29,4 @@ public partial class CampaignReportMapper
     [MapperIgnoreTarget(nameof(CampaignReport.DeletedBy))]
     [MapperIgnoreTarget(nameof(CampaignReport.CampaignId))]
     public partial CampaignReport MapCampaignReportUpdateRequestDtoToCampaignReport(CampaignReportUpdateRequestDto campaignReportUpdateRequestDto);
-    
-    [MapperIgnoreSource(nameof(campaignReport.UpdatedAt))]
-    [MapperIgnoreSource(nameof(campaignReport.UpdatedBy))]
-    public partial CampaignReportDeleteResponseDto MapCampaignReportToCampaignReportDeleteResponseDto(CampaignReport campaignReport);
 }
