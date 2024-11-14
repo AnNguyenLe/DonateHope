@@ -46,8 +46,7 @@ public class CampaignCommentUpdateService(
         var updatedCampaignComment = _campaignCommentMapper.MapCampaignCommentUpdateRequestDtoToCampaignComment(
             updateCommentRequestDto
         );
-        // updatedCampaignComment.UserId = userId;
-        // updatedCampaignComment.CampaignId = currentCampaignComment.CampaignId;
+       
         updatedCampaignComment.UpdatedAt = DateTime.UtcNow;
         updatedCampaignComment.UpdatedBy = userId;
 
