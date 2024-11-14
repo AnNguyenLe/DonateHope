@@ -60,7 +60,6 @@ public class CampaignCommentController(
         return CreatedAtRoute(
             nameof(CreateCampaignComment),
             new { id = campaignComment.Id },
-            // _campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto(campaignComment)
             campaignComment
 
         );
