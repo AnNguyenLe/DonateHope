@@ -2,7 +2,6 @@ using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.Authentication;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignRatingsServiceContracts;
-using DonateHope.Core.ServiceContracts.CampaignReportsServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Core.ServiceContracts.Email;
 using DonateHope.Core.ServiceContracts.HtmlTemplate;
