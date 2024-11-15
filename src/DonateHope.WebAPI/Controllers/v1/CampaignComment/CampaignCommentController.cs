@@ -60,7 +60,6 @@ public class CampaignCommentController(
         return CreatedAtRoute(
             nameof(CreateCampaignComment),
             new { id = campaignComment.Id },
-            // _campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto(campaignComment)
             campaignComment
 
         );
@@ -120,6 +119,7 @@ public class CampaignCommentController(
         }
 
         return NoContent();
+        return NoContent();
     }
     [HttpDelete("{id}", Name = nameof(DeleteCampaignComment))]
     public async Task<ActionResult<CampaignCommentDeleteDto>> DeleteCampaignComment(
@@ -153,5 +153,6 @@ public class CampaignCommentController(
             return result.Errors.ToDetailedBadRequest();
         }
         return Ok();
+       return Ok();
     }
 }
