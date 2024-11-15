@@ -40,14 +40,12 @@ public class CampaignCommentUpdateService(
                 userId,
                 updateCommentRequestDto.Id
                 );
-                 return new ProblemDetailsError("You are unauthorized to update this campaign comment.");
+            return new ProblemDetailsError("You are unauthorized to update this campaign comment.");
         }
 
         var updatedCampaignComment = _campaignCommentMapper.MapCampaignCommentUpdateRequestDtoToCampaignComment(
             updateCommentRequestDto
         );
-        // updatedCampaignComment.UserId = userId;
-        // updatedCampaignComment.CampaignId = currentCampaignComment.CampaignId;
         updatedCampaignComment.UpdatedAt = DateTime.UtcNow;
         updatedCampaignComment.UpdatedBy = userId;
 

@@ -42,9 +42,6 @@ public class CampaignCommentDeleteService(
             return new ProblemDetailsError("This campaign comment does not exist.");
         }
 
-        deletedCampaignComment.DeletedAt = DateTime.UtcNow;
-        deletedCampaignComment.DeletedBy = deletedBy;
-
         var deletedResult = await _campaignCommentsRepository.DeleteCampaignComment(
             campaignCommentId,
             deletedBy,
@@ -62,7 +59,7 @@ public class CampaignCommentDeleteService(
         }
 
         _logger.LogInformation(
-            "Successfully deleted campaign contribution {CampaignContributionId}", campaignCommentId);
+            "Successfully deleted campaign comment {CampaignCommentId}", campaignCommentId);
         return _campaignCommentMapper.MapCampaignCommentToCampaignCommentDeleteDto(deletedCampaignComment);
     }
 }

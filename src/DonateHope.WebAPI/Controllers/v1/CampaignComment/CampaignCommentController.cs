@@ -119,10 +119,7 @@ public class CampaignCommentController(
             return updatedResult.Errors.ToDetailedBadRequest();
         }
 
-        return CreatedAtRoute(
-            nameof(UpdateCampaignComment),
-            new { id = campaignCommentId },
-            updatedResult.Value);
+        return NoContent();
     }
     [HttpDelete("{id}", Name = nameof(DeleteCampaignComment))]
     public async Task<ActionResult<CampaignCommentDeleteDto>> DeleteCampaignComment(
@@ -155,6 +152,6 @@ public class CampaignCommentController(
         {
             return result.Errors.ToDetailedBadRequest();
         }
-        return result.Value;
+        return Ok();
     }
 }

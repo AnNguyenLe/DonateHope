@@ -4,7 +4,6 @@ namespace DonateHope.Core.DTOs.CampaignCommentDTOs;
 
 public class CampaignCommentCreateRequestDto
 {
-    // public Guid Id { get; set; }
     public string? Content { get; set; }
     public DateTime? CreatedAt { get; set; }
     public Guid? CreatedBy { get; set; }
