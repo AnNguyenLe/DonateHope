@@ -5,11 +5,11 @@ namespace DonateHope.Domain.Entities;
 
 public class CampaignComment : ITraceable, IBannedStatus
 {
-    public Guid Id { get; init; }
+    public Guid Id { get; set; }
     public string? Content { get; set; }
     public DateTime? CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
     public Guid? CreatedBy { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public Guid? UpdatedBy { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime? DeletedAt { get; set; }
