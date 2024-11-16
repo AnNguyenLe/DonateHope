@@ -32,6 +32,16 @@ public class CampaignCommentUpdateService(
         }
 
         var currentCampaignComment = queryResult.Value;
+        // Check if the comment is deleted
+        if (currentCampaignComment.IsDeleted)
+        {
+            _logger.LogWarning(
+                "Attempt to update deleted campaign comment {CampaignCommentId}",
+                updateCommentRequestDto.Id
+            );
+            return new ProblemDetailsError("Cannot update a deleted campaign comment.");
+        }
+
 
         if (userId != currentCampaignComment.UserId)
         {
@@ -46,6 +56,7 @@ public class CampaignCommentUpdateService(
         var updatedCampaignComment = _campaignCommentMapper.MapCampaignCommentUpdateRequestDtoToCampaignComment(
             updateCommentRequestDto
         );
+       
         updatedCampaignComment.UpdatedAt = DateTime.UtcNow;
         updatedCampaignComment.UpdatedBy = userId;
 
