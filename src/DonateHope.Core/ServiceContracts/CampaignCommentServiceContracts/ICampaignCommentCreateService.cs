@@ -8,6 +8,6 @@ public interface ICampaignCommentCreateService
 {
     Task<Result<CampaignComment>> CreateCampaignCommentAsync(
         CampaignCommentCreateRequestDto campaignCommentCreateRequestDto,
-    string userId
+    Guid userId
     );
 }

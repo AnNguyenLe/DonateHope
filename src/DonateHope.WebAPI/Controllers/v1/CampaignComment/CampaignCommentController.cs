@@ -48,7 +48,7 @@ public class CampaignCommentController(
         {
             return BadRequestProblemDetails("Unable to identify user");
         }
-        var result = await _campaignCommentCreateService.CreateCampaignCommentAsync(createRequest, userId);
+        var result = await _campaignCommentCreateService.CreateCampaignCommentAsync(createRequest, parsedUserId);
 
         if (result.IsFailed)
         {
@@ -61,10 +61,8 @@ public class CampaignCommentController(
             nameof(CreateCampaignComment),
             new { id = campaignComment.Id },
             campaignComment
-
         );
     }
-
     [HttpGet("{id}", Name = nameof(GetCampaignComment))]
     public async Task<ActionResult<CampaignCommentGetResponseDto>> GetCampaignComment([FromRoute] Guid id)
     {
@@ -119,7 +117,6 @@ public class CampaignCommentController(
         }
 
         return NoContent();
-        return NoContent();
     }
     [HttpDelete("{id}", Name = nameof(DeleteCampaignComment))]
     public async Task<ActionResult<CampaignCommentDeleteDto>> DeleteCampaignComment(
@@ -153,6 +150,5 @@ public class CampaignCommentController(
             return result.Errors.ToDetailedBadRequest();
         }
         return Ok();
-       return Ok();
     }
 }

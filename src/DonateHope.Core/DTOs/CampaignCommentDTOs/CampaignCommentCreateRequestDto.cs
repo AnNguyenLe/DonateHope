@@ -5,6 +5,5 @@ namespace DonateHope.Core.DTOs.CampaignCommentDTOs;
 public class CampaignCommentCreateRequestDto
 {
     public string? Content { get; set; }
-    public Guid? UserId { get; set; }
     public Guid? CampaignId { get; set; }
 }
