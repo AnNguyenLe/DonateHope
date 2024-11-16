@@ -119,9 +119,8 @@ public class CampaignCommentController(
         return NoContent();
     }
     [HttpDelete("{id}", Name = nameof(DeleteCampaignComment))]
-    public async Task<ActionResult<CampaignCommentDeleteDto>> DeleteCampaignComment(
-        [FromRoute] string id,
-        [FromBody] CampaignCommentDeleteRequestDto reasonForDeletionRequestDto)
+    public async Task<ActionResult> DeleteCampaignComment(
+        [FromRoute] string id)
     {
         if (!Guid.TryParse(id, out var campaignCommentId))
         {
@@ -140,15 +139,13 @@ public class CampaignCommentController(
         }
 
         var result = await _campaignCommentDeleteService.DeleteCampaignCommentAsync(
-            campaignCommentId,
-            deletedBy,
-            reasonForDeletionRequestDto.ReasonForDeletion
+            campaignCommentId, deletedBy
             );
 
         if (result.IsFailed)
         {
             return result.Errors.ToDetailedBadRequest();
         }
-        return Ok();
+        return Ok(new { Message = "Your comment has been deleted." });
     }
 }

@@ -38,8 +38,4 @@ public partial class CampaignCommentMapper
     [MapperIgnoreTarget(nameof(CampaignComment.Campaign))]
     [MapperIgnoreTarget(nameof(CampaignComment.CampaignId))]
     public partial CampaignComment MapCampaignCommentUpdateRequestDtoToCampaignComment(CampaignCommentUpdateRequestDto dto);
-
-    [MapperIgnoreSource(nameof(CampaignComment.UpdatedBy))]
-    [MapperIgnoreSource(nameof(CampaignComment.UpdatedAt))]
-    public partial CampaignCommentDeleteDto MapCampaignCommentToCampaignCommentDeleteDto(CampaignComment dto);
 }

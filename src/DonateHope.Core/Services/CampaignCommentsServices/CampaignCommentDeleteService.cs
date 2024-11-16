@@ -18,10 +18,8 @@ public class CampaignCommentDeleteService(
     private readonly ICampaignCommentsRepository _campaignCommentsRepository = campaignCommentRepository;
     private readonly CampaignCommentMapper _campaignCommentMapper = campaignCommentMapper;
 
-    public async Task<Result<CampaignCommentDeleteDto>> DeleteCampaignCommentAsync(
-        Guid campaignCommentId,
-        Guid deletedBy,
-        string reasonForDeletion
+    public async Task<Result> DeleteCampaignCommentAsync(
+        Guid campaignCommentId, Guid deletedBy
         )
     {
         var queryResult = await _campaignCommentsRepository.GetCampaignCommentById(campaignCommentId);
@@ -43,9 +41,7 @@ public class CampaignCommentDeleteService(
         }
 
         var deletedResult = await _campaignCommentsRepository.DeleteCampaignComment(
-            campaignCommentId,
-            deletedBy,
-            reasonForDeletion
+            campaignCommentId, deletedBy
         );
 
         if (deletedResult.IsFailed)
@@ -60,6 +56,6 @@ public class CampaignCommentDeleteService(
 
         _logger.LogInformation(
             "Successfully deleted campaign comment {CampaignCommentId}", campaignCommentId);
-        return _campaignCommentMapper.MapCampaignCommentToCampaignCommentDeleteDto(deletedCampaignComment);
+        return Result.Ok();
     }
 }

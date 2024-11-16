@@ -96,9 +96,7 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
 
 
     public async Task<Result<int>> DeleteCampaignComment(
-        Guid campaignCommentId,
-        Guid deletedBy,
-        string reasonForDeletion
+        Guid campaignCommentId, Guid deletedBy
         )
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
@@ -107,8 +105,7 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
                          SET
                             is_deleted = @isDeleted,
                             deleted_at = @deletedAt,
-                            deleted_by = @deletedBy,
-                            reason_for_deletion = @reasonForDeletion
+                            deleted_by = @deletedBy
                          WHERE id = @campaignCommentId
                          """;
         var totalAffectedRows = await dbConnection.ExecuteAsync(
@@ -118,7 +115,6 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
                 isDeleted = true,
                 deletedAt = DateTime.UtcNow,
                 deletedBy,
-                reasonForDeletion,
                 campaignCommentId
             });
         if (totalAffectedRows == 0)
