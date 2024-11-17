@@ -38,6 +38,16 @@ public class CampaignContributionDeleteService(
         }
         
         var deletedCampaignContribution = queryResult.Value;
+        
+        if (deletedBy != deletedCampaignContribution.UserId)
+        {
+            _logger.LogWarning(
+                "User id {UserId} is unauthorized to update campaign contribution {CampaignContributionId}",
+                deletedBy,
+                deletedCampaignContribution.Id
+            );
+            return new ProblemDetailsError("You are unauthorized to update this campaign contribution.");
+        }
         if (deletedCampaignContribution.IsDeleted)
         {
             _logger.LogWarning("The campaign contribution {CampaignContributionId} is already marked as deleted.", deletedCampaignContribution.Id);

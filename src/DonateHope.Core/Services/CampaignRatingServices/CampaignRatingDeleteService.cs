@@ -35,6 +35,17 @@ public class CampaignRatingDeleteService(
         }
         
         var deletedCampaignRating = queryResult.Value;
+        
+        if (deletedBy != deletedCampaignRating.UserId)
+        {
+            _logger.LogWarning(
+                "User id {UserId} is unauthorized to update campaign contribution {CampaignRatingId}",
+                deletedBy,
+                deletedCampaignRating.Id
+            );
+            return new ProblemDetailsError("You are unauthorized to update this campaign rating.");
+        }
+        
         if (deletedCampaignRating.IsDeleted)
         {
             _logger.LogWarning("The campaign rating {CampaignRatingId} is already marked as deleted.", campaignRatingId);
