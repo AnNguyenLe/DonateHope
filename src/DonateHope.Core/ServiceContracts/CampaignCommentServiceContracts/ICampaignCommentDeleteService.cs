@@ -5,5 +5,5 @@ namespace DonateHope.Core.ServiceContracts.CampaignCommentServiceContracts;
 
 public interface ICampaignCommentDeleteService
 {
-    Task<Result<CampaignCommentDeleteDto>> DeleteCampaignCommentAsync(Guid campaignCommentId, Guid deletedBy, string reasonForDeletion);
+    Task<Result> DeleteCampaignCommentAsync(Guid campaignCommentId, Guid deletedBy);
 }

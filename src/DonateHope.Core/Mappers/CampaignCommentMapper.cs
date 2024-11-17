@@ -8,6 +8,7 @@ namespace DonateHope.Core.Mappers;
 public partial class CampaignCommentMapper
 {
     [MapperIgnoreTarget(nameof(CampaignComment.IsDeleted))]
+    [MapperIgnoreTarget(nameof(CampaignComment.UserId))]
     [MapperIgnoreTarget(nameof(CampaignComment.DeletedAt))]
     [MapperIgnoreTarget(nameof(CampaignComment.DeletedBy))]
     [MapperIgnoreTarget(nameof(CampaignComment.UpdatedAt))]
@@ -37,8 +38,4 @@ public partial class CampaignCommentMapper
     [MapperIgnoreTarget(nameof(CampaignComment.Campaign))]
     [MapperIgnoreTarget(nameof(CampaignComment.CampaignId))]
     public partial CampaignComment MapCampaignCommentUpdateRequestDtoToCampaignComment(CampaignCommentUpdateRequestDto dto);
-
-    [MapperIgnoreSource(nameof(CampaignComment.UpdatedBy))]
-    [MapperIgnoreSource(nameof(CampaignComment.UpdatedAt))]
-    public partial CampaignCommentDeleteDto MapCampaignCommentToCampaignCommentDeleteDto(CampaignComment dto);
 }

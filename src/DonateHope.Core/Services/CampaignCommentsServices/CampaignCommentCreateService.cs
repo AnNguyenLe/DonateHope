@@ -19,12 +19,12 @@ public class CampaignCommentCreateService(
 
     public async Task<Result<CampaignComment>> CreateCampaignCommentAsync(
         CampaignCommentCreateRequestDto campaignCommentCreateRequestDto,
-        string userId
+        Guid userId
     )
     {
         var campaignComment = _campaignCommentMapper
             .MapCampaignCommentCreateRequestDtoToCampaignComment(campaignCommentCreateRequestDto)
-            .OnNewCampaignCommentCreating(Guid.Parse(userId));
+            .OnNewCampaignCommentCreating(userId);
 
         var affectedRows = await _campaignCommentsRepository.AddCampaignComment(campaignComment);
         if (affectedRows == 0)
