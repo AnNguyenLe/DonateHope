@@ -59,6 +59,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrieveService>();
         services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdateService>();
         services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeleteService>();
+        services.AddValidatorsFromAssemblyContaining<CampaignContributionCreateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionUpdateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
         
@@ -68,6 +69,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignRatingRetrieveService, CampaignRatingRetrieveService>();
         services.TryAddScoped<ICampaignRatingUpdateService, CampaignRatingUpdateService>();
         services.TryAddScoped<ICampaignRatingDeleteService, CampaignRatingDeleteService>();
+        services.AddValidatorsFromAssemblyContaining<CampaignRatingCreateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignRatingUpdateRequestValidator>();
         
         services.TryAddScoped<ICampaignReportsRepository, CampaignReportsRepository>();

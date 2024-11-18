@@ -20,8 +20,9 @@ public class CampaignContributionController(
     ICampaignContributionRetrieveService campaignContributionRetrieveService,
     ICampaignContributionUpdateService campaignContributionUpdateService,
     ICampaignContributionDeleteService campaignContributionDeleteService,
-    IValidator<CampaignContributionDeleteRequestDto> campaignContributionDeleteRequestValidator,
+    IValidator<CampaignContributionCreateRequestDto> campaignContributionCreateRequestValidator,
     IValidator<CampaignContributionUpdateRequestDto> campaignContributionUpdateRequestValidator,
+    IValidator<CampaignContributionDeleteRequestDto> campaignContributionDeleteRequestValidator,
     UserManager<AppUser> userManager,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
     CampaignContributionMapper campaignContributionMapper
@@ -34,6 +35,7 @@ public class CampaignContributionController(
     private readonly ICampaignContributionRetrieveService _campaignContributionRetrieveService = campaignContributionRetrieveService;
     private readonly ICampaignContributionUpdateService _campaignContributionUpdateService = campaignContributionUpdateService;
     private readonly ICampaignContributionDeleteService _campaignContributionDeleteService = campaignContributionDeleteService;
+    private readonly IValidator<CampaignContributionCreateRequestDto> _campaignContributionCreateValidator = campaignContributionCreateRequestValidator;
     private readonly IValidator<CampaignContributionUpdateRequestDto> _campaignContributionUpdateValidator = campaignContributionUpdateRequestValidator;
     private readonly IValidator<CampaignContributionDeleteRequestDto> _campaignContributionDeleteValidator = campaignContributionDeleteRequestValidator;
 
@@ -50,6 +52,14 @@ public class CampaignContributionController(
         if (!Guid.TryParse(userId, out var parsedUserId))
         {
             return BadRequestProblemDetails("Unable to identify user");
+        }
+        
+        var modelValidationResult = await _campaignContributionCreateValidator.ValidateAsync(createRequest);
+        if (!modelValidationResult.IsValid)
+        {
+            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
+                title: "Failed to update campaign contribution.",
+                detail: "Make sure all the required fields are properly entered.");
         }
         
         var result = await _campaignContributionCreateService.CreateCampaignContributionAsync(
@@ -94,14 +104,6 @@ public class CampaignContributionController(
         [FromBody] CampaignContributionUpdateRequestDto updateRequestDto
     )
     {
-        var modelValidationResult = await _campaignContributionUpdateValidator.ValidateAsync(updateRequestDto);
-        if (!modelValidationResult.IsValid)
-        {
-            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
-                title: "Failed to update campaign contribution.",
-                detail: "Make sure all the required fields are properly entered.");
-        }
-        
         if (!Guid.TryParse(id, out var campaignContributionId))
         {
             return BadRequestProblemDetails("Invalid ID format");
@@ -122,6 +124,14 @@ public class CampaignContributionController(
         if (!Guid.TryParse(userId, out var parsedUserId))
         {
             return BadRequestProblemDetails("Unable to identify user.");
+        }
+        
+        var modelValidationResult = await _campaignContributionUpdateValidator.ValidateAsync(updateRequestDto);
+        if (!modelValidationResult.IsValid)
+        {
+            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
+                title: "Failed to update campaign contribution.",
+                detail: "Make sure all the required fields are properly entered.");
         }
 
         var updatedResult = await _campaignContributionUpdateService.UpdateCampaignContributionAsync(
