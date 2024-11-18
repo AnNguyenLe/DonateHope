@@ -117,7 +117,7 @@ public class CampaignRatingsRepository(
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var queryResult = await _dbContext
-            .CampaignRatings.Where(cr => cr.Id == campaignRatingId)
+            .CampaignRatings.Where(cr => cr.Id == campaignRatingId && cr.IsDeleted == false)
             .FirstOrDefaultAsync();
         if (queryResult is null)
         {

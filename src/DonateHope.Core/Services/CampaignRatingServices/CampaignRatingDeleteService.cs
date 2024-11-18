@@ -36,6 +36,12 @@ public class CampaignRatingDeleteService(
         
         var deletedCampaignRating = queryResult.Value;
         
+        if (deletedCampaignRating.IsDeleted)
+        {
+            _logger.LogWarning("The campaign rating {CampaignRatingId} is already marked as deleted.", campaignRatingId);
+            return new ProblemDetailsError("This campaign rating does not exist.");
+        }
+        
         if (deletedBy != deletedCampaignRating.UserId)
         {
             _logger.LogWarning(
@@ -44,12 +50,6 @@ public class CampaignRatingDeleteService(
                 deletedCampaignRating.Id
             );
             return new ProblemDetailsError("You are unauthorized to update this campaign rating.");
-        }
-        
-        if (deletedCampaignRating.IsDeleted)
-        {
-            _logger.LogWarning("The campaign rating {CampaignRatingId} is already marked as deleted.", campaignRatingId);
-            return new ProblemDetailsError("This campaign rating does not exist.");
         }
         
         deletedCampaignRating.DeletedAt = DateTime.UtcNow;
