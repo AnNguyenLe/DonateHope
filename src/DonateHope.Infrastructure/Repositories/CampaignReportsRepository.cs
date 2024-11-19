@@ -132,7 +132,7 @@ public class CampaignReportsRepository(
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
         var queryResult = await _dbContext
-            .CampaignReports.Where(cr => cr.Id == campaignReportId)
+            .CampaignReports.Where(cr => cr.Id == campaignReportId && cr.IsDeleted == false)
             .FirstOrDefaultAsync();
         if (queryResult is null)
         {
