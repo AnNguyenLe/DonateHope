@@ -34,6 +34,15 @@ public class CampaignCommentDeleteService(
         }
 
         var deletedCampaignComment = queryResult.Value;
+
+        if (deletedCampaignComment.CreatedBy != deletedBy)
+        {
+            _logger.LogWarning(
+                "Unauthorized attempt to delete campaign comment {CampaignCommentId} by user {UserId}",
+                campaignCommentId, deletedBy
+            );
+            return new ProblemDetailsError("You do not have permission to delete this comment.");
+        }
         if (deletedCampaignComment.IsDeleted)
         {
             _logger.LogWarning("The campaign comment {CampaignCommentId} is already marked as deleted.", deletedCampaignComment.Id);
