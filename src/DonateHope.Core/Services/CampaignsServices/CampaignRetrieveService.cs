@@ -17,8 +17,6 @@ public class CampaignRetrieveService(
 
     public async Task<Result<CampaignGetResponseDto>> GetCampaignByIdAsync(Guid campaignId)
     {
-        
-
         var campaignResult = await _campaignsRepository.GetCampaignById(campaignId);
         if (campaignResult.IsFailed)
         {
@@ -26,5 +24,21 @@ public class CampaignRetrieveService(
         }
 
         return _campaignMapper.MapCampaignToCampaignGetResponseDto(campaignResult.Value);
+    }
+
+    public async Task<Result<IEnumerable<CampaignGetResponseDto>>> GetCampaigns()
+    {
+        var campaignsListQuery = await _campaignsRepository.GetCampaigns();
+
+        if (campaignsListQuery.IsFailed)
+        {
+            return new ProblemDetailsError(campaignsListQuery.Errors.First().Message);
+        }
+
+        var campaignDtos = campaignsListQuery.Value.Select(
+            _campaignMapper.MapCampaignToCampaignGetResponseDto
+        );
+
+        return Result.Ok(campaignDtos);
     }
 }

@@ -151,9 +151,16 @@ public class CampaignsRepository(
         return totalAffectedRows;
     }
 
-    public IQueryable<Campaign> GetCampaigns(Expression<Func<Campaign, bool>> predicate)
+    public async Task<Result<List<Campaign>>> GetCampaigns(
+        Expression<Func<Campaign, bool>> predicate
+    )
     {
-        return _dbContext.Campaigns.Where(predicate);
+        return await _dbContext.Campaigns.Where(predicate).ToListAsync();
+    }
+
+    public async Task<Result<List<Campaign>>> GetCampaigns()
+    {
+        return await _dbContext.Campaigns.ToListAsync();
     }
 
     public async Task<Result<Campaign>> GetCampaignById(Guid campaignId)
