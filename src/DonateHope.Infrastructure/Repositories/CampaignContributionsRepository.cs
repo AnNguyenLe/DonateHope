@@ -20,7 +20,9 @@ public class CampaignContributionsRepository(
     public async Task<Result<int>> AddCampaignContribution(CampaignContribution campaignContribution)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
-        var sqlCommand = """
+        using var transaction = dbConnection.BeginTransaction();
+        
+        var createCampaignContributionSqlCommand = """
                          INSERT INTO campaign_contributions
                              (
                                 id,
@@ -50,13 +52,33 @@ public class CampaignContributionsRepository(
                                 @CampaignId
                              )
                          """;
-        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, campaignContribution);
-        if (totalAffectedRows == 0)
+        var createCampaignContributionResult = await dbConnection.ExecuteAsync(createCampaignContributionSqlCommand, campaignContribution, transaction);
+        if (createCampaignContributionResult == 0)
         {
+            transaction.Rollback();
             return new ProblemDetailsError("Failed to add campaign contribution.");
         }
         
-        return totalAffectedRows;
+        var updateCampaignSqlCommand = """
+                                    UPDATE campaigns
+                                    SET achieved_amount = achieved_amount + @Amount
+                                    WHERE id = @CampaignId;
+                                    """;
+        var updateCampaignResult = await dbConnection.ExecuteAsync(updateCampaignSqlCommand, 
+            new
+            {
+                CampaignId = campaignContribution.CampaignId,
+                Amount = campaignContribution.Amount,
+            }, transaction);
+
+        if (updateCampaignResult == 0)
+        {
+            transaction.Rollback();
+            return new ProblemDetailsError("Failed to update campaign achieved amount.");
+        }
+        
+        transaction.Commit();
+        return createCampaignContributionResult;
     }
 
     public async Task<Result<int>> DeleteCampaignContribution(
@@ -66,7 +88,20 @@ public class CampaignContributionsRepository(
         )
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
-        var sqlCommand = """
+        using var transaction = dbConnection.BeginTransaction();
+        
+        var currentContribution = await dbConnection.QueryFirstOrDefaultAsync<CampaignContribution>(
+            "SELECT amount, campaign_id as CampaignId FROM campaign_contributions WHERE id = @Id",
+            new {Id = campaignContributionId},
+            transaction
+        );
+
+        if (currentContribution == null)
+        {
+            return new ProblemDetailsError($"CampaignContribution with ID: {campaignContributionId} not found or already deleted.");
+        }
+        
+        var deleteCampaignContributionSqlCommand = """
                          UPDATE campaign_contributions
                          SET
                             is_deleted = @isDeleted,
@@ -75,8 +110,8 @@ public class CampaignContributionsRepository(
                             reason_for_deletion = @reasonForDeletion
                          WHERE id = @campaignContributionId
                          """;
-        var totalAffectedRows = await dbConnection.ExecuteAsync(
-            sqlCommand,
+        var deleteCampaignContributionResult = await dbConnection.ExecuteAsync(
+            deleteCampaignContributionSqlCommand,
             new
             {
                 isDeleted = true,
@@ -84,13 +119,36 @@ public class CampaignContributionsRepository(
                 deletedBy,
                 reasonForDeletion,
                 campaignContributionId
-            });
-        if (totalAffectedRows == 0)
+            }, transaction);
+        
+        if (deleteCampaignContributionResult == 0)
         {
+            transaction.Rollback();
             return new ProblemDetailsError("Something wrong trying to delete this record.");
         }
+        
+        var updateCampaignSqlCommand = """
+                                       UPDATE campaigns
+                                       SET achieved_amount = achieved_amount - @Amount
+                                       WHERE id = @CampaignId;
+                                       """;
+        var updateCampaignResult = await dbConnection.ExecuteAsync(
+            updateCampaignSqlCommand,
+            new
+                {
+                    Amount = currentContribution.Amount,
+                    CampaignId = currentContribution.CampaignId
+                },transaction
+            );
+        
+        if (updateCampaignResult == 0)
+        {
+            transaction.Rollback();
+            return new ProblemDetailsError("Failed to update campaign achieved amount.");
+        }
 
-        return totalAffectedRows;
+        transaction.Commit();
+        return deleteCampaignContributionResult;
     }
     
     /// <summary>
@@ -135,7 +193,19 @@ public class CampaignContributionsRepository(
     public async Task<Result<int>> UpdateCampaignContribution(CampaignContribution updateCampaignContribution)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
-        var sqlCommand = """
+        using var transaction = dbConnection.BeginTransaction();
+
+        var currentContributionAmount = await dbConnection.QueryFirstOrDefaultAsync<CampaignContribution>(
+            "SELECT amount FROM campaign_contributions WHERE id = @Id",
+            new {Id = updateCampaignContribution.Id},
+            transaction
+        );
+        if (currentContributionAmount == null)
+        {
+            return new ProblemDetailsError($"CampaignContribution with ID: {updateCampaignContribution.Id} not found or already deleted.");
+        }
+        
+        var updateCampaignContributionCommand = """
                          UPDATE campaign_contributions
                          SET
                              amount = @Amount,
@@ -146,11 +216,38 @@ public class CampaignContributionsRepository(
                          WHERE 
                              id = @Id;
                          """;
-        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, updateCampaignContribution);
-        if (totalAffectedRows == 0)
+        var updateCampaignContributionResult = await dbConnection.ExecuteAsync(updateCampaignContributionCommand, updateCampaignContribution, transaction);
+        
+        if (updateCampaignContributionResult == 0)
         {
+            transaction.Rollback();
             return new ProblemDetailsError("Unable to update campaign_contribution.");
         }
-        return totalAffectedRows;
+
+        if (updateCampaignContribution.Amount != currentContributionAmount.Amount)
+        {
+            var currentAmount = currentContributionAmount.Amount;
+            var updateCampaignCommand = """
+                                        UPDATE campaigns
+                                        SET achieved_amount = achieved_amount + @UpdateAmount - @CurrentAmount
+                                        WHERE id = @CampaignId;
+                                        """;
+            var updateCampaignResult = await dbConnection.ExecuteAsync(updateCampaignCommand,
+                new
+                {
+                    UpdateAmount = updateCampaignContribution.Amount,
+                    CurrentAmount = currentContributionAmount.Amount,
+                    CampaignId = updateCampaignContribution.CampaignId
+                }, transaction);
+            
+            if (updateCampaignResult == 0)
+            {
+                transaction.Rollback();
+                return new ProblemDetailsError("Failed to update campaign achieved amount.");
+            }
+        }
+        
+        transaction.Commit();
+        return updateCampaignContributionResult;
     }
 }
