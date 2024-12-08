@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 namespace DonateHope.WebAPI.Controllers.v1.CampaignComment;
 
 [ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/campaign-comment")]
+[Route("api/v{version:apiVersion}")]
 [ApiController]
 public class CampaignCommentController(
     ICampaignCommentCreateService campaignCommentCreateService,
@@ -33,7 +33,7 @@ public class CampaignCommentController(
     private readonly ICampaignCommentUpdateService _campaignCommentUpdateService = campaignCommentUpdateService;
     private readonly ICampaignCommentDeleteService _campaignCommentDeleteService = campaignCommentDeleteService;
 
-    [HttpPost("create", Name = nameof(CreateCampaignComment))]
+    [HttpPost("campaign-comment/create", Name = nameof(CreateCampaignComment))]
     public async Task<ActionResult<CampaignCommentGetResponseDto>> CreateCampaignComment(
         [FromBody] CampaignCommentCreateRequestDto createRequest
     )
@@ -63,7 +63,7 @@ public class CampaignCommentController(
             campaignComment
         );
     }
-    [HttpGet("{id}", Name = nameof(GetCampaignComment))]
+    [HttpGet("campaign-comment/{id}", Name = nameof(GetCampaignComment))]
     public async Task<ActionResult<CampaignCommentGetResponseDto>> GetCampaignComment([FromRoute] Guid id)
     {
         var userId = _userManager.GetUserId(User);
@@ -81,7 +81,7 @@ public class CampaignCommentController(
 
         return result.Value;
     }
-    [HttpPut("{id}", Name = nameof(UpdateCampaignComment))]
+    [HttpPut("campaign-comment/{id}", Name = nameof(UpdateCampaignComment))]
     public async Task<ActionResult<CampaignCommentUpdateRequestDto>> UpdateCampaignComment([FromRoute] string id, [FromBody] CampaignCommentUpdateRequestDto updateCampaignCommentDto)
     {
         if (!Guid.TryParse(id, out var campaignCommentId))
@@ -118,7 +118,7 @@ public class CampaignCommentController(
 
         return NoContent();
     }
-    [HttpDelete("{id}", Name = nameof(DeleteCampaignComment))]
+    [HttpDelete("campaign-comment/{id}", Name = nameof(DeleteCampaignComment))]
     public async Task<ActionResult> DeleteCampaignComment(
         [FromRoute] string id)
     {
@@ -147,5 +147,18 @@ public class CampaignCommentController(
             return result.Errors.ToDetailedBadRequest();
         }
         return Ok(new { Message = "Your comment has been deleted." });
+    }
+
+    [HttpGet("campaign/{id}/comment", Name = nameof(GetCommentsByCampaignId))]
+    public async Task<ActionResult<List<CampaignCommentGetResponseDto>>> GetCommentsByCampaignId([FromRoute] Guid id)
+    {
+        var result = await _campaignCommentRetrieveService.GetCommentsByCampaignId(id);
+
+        if (result.IsFailed)
+        {
+            return result.Errors.ToDetailedBadRequest();
+        }
+
+        return Ok(result.Value);
     }
 }
