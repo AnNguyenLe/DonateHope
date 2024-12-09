@@ -21,4 +21,6 @@ public class CampaignComment : ITraceable, IBannedStatus
     public Guid? CampaignId { get; set; }
     public AppUser? User { get; set; }
     public Campaign? Campaign { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
 }

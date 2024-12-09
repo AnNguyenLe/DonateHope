@@ -57,33 +57,35 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
     public async Task<IEnumerable<CampaignComment>> GetCommentsByCampaignId(Guid campaignId)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+
         var sqlCommand = """
-        SELECT 
-            id,
-            content, 
-            created_at AS CreatedAt, 
-            updated_at AS UpdatedAt, 
-            created_by AS CreatedBy, 
-            updated_by AS UpdatedBy,
-            is_deleted AS IsDeleted,
-            deleted_at AS DeletedAt,
-            deleted_by AS DeletedBy,
-            is_banned AS IsBanned, 
-            user_id AS UserId,
-            campaign_id AS CampaignId
-        FROM 
-            campaign_comments
-        WHERE 
-            campaign_id = @CampaignId
-            AND is_deleted = false
-        ORDER BY 
-            created_at DESC;
+    SELECT 
+        c.id,
+        c.content, 
+        c.created_at AS CreatedAt, 
+        c.updated_at AS UpdatedAt, 
+        c.created_by AS CreatedBy, 
+        c.updated_by AS UpdatedBy,
+        c.is_deleted AS IsDeleted,
+        c.deleted_at AS DeletedAt,
+        c.deleted_by AS DeletedBy,
+        c.is_banned AS IsBanned, 
+        c.user_id AS UserId,
+        c.campaign_id AS CampaignId,
+        u.first_name AS FirstName,
+        u.last_name AS LastName
+    FROM 
+        campaign_comments c
+    JOIN 
+        app_users u ON c.user_id = u.id
+    WHERE 
+        c.campaign_id = @CampaignId
+        AND c.is_deleted = false
+    ORDER BY 
+        c.created_at DESC;
     """;
 
-        var comments = await dbConnection.QueryAsync<CampaignComment>(
-            sqlCommand,
-            new { CampaignId = campaignId }
-        );
+        var comments = await dbConnection.QueryAsync<CampaignComment>(sqlCommand, new { CampaignId = campaignId });
 
         return comments;
     }
