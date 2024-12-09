@@ -58,8 +58,32 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrieveService>();
         services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdateService>();
         services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeleteService>();
-
+        services.AddValidatorsFromAssemblyContaining<CampaignContributionUpdateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
+        
+        services.TryAddScoped<ICampaignRatingsRepository, CampaignRatingsRepository>();
+        services.TryAddSingleton<CampaignRatingMapper>();
+        services.TryAddScoped<ICampaignRatingCreateService, CampaignRatingCreateService>();
+        services.TryAddScoped<ICampaignRatingRetrieveService, CampaignRatingRetrieveService>();
+        services.TryAddScoped<ICampaignRatingUpdateService, CampaignRatingUpdateService>();
+        services.TryAddScoped<ICampaignRatingDeleteService, CampaignRatingDeleteService>();
+        services.AddValidatorsFromAssemblyContaining<CampaignRatingUpdateRequestValidator>();
+        
+        services.TryAddScoped<ICampaignReportsRepository, CampaignReportsRepository>();
+        services.TryAddSingleton<CampaignReportMapper>();
+        services.TryAddScoped<ICampaignReportCreateService, CampaignReportCreateService>();
+        services.TryAddScoped<ICampaignReportRetrieveService, CampaignReportRetrieveService>();
+        services.TryAddScoped<ICampaignReportUpdateService, CampaignReportUpdateService>();
+        services.TryAddScoped<ICampaignReportDeleteService, CampaignReportDeleteService>();
+        services.AddValidatorsFromAssemblyContaining<CampaignReportDeleteRequestValidator>();
+        
+        services.TryAddScoped<ICampaignCommentsRepository, CampaignCommentsRepository>();
+        services.TryAddSingleton<CampaignCommentMapper>();
+        services.TryAddScoped<ICampaignCommentCreateService, CampaignCommentCreateService>();
+        services.TryAddScoped<ICampaignCommentRetrieveService, CampaignCommentRetrieveService>();
+        services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
+        services.TryAddScoped<ICampaignCommentDeleteService, CampaignCommentDeleteService>();
+        
         return services;
     }
 }

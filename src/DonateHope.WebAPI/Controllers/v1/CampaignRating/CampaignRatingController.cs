@@ -20,6 +20,7 @@ public class CampaignRatingController(
     ICampaignRatingRetrieveService campaignRatingRetrieveService,
     ICampaignRatingUpdateService campaignRatingUpdateService,
     ICampaignRatingDeleteService campaignRatingDeleteService,
+    IValidator<CampaignRatingCreateRequestDto> campaignRatingCreateRequestValidator,
     IValidator<CampaignRatingUpdateRequestDto> campaignRatingUpdateRequestValidator,
     UserManager<AppUser> userManager,
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
@@ -33,6 +34,7 @@ public class CampaignRatingController(
     private readonly ICampaignRatingRetrieveService _campaignRatingRetrieveService = campaignRatingRetrieveService;
     private readonly ICampaignRatingUpdateService _campaignRatingUpdateService = campaignRatingUpdateService;
     private readonly ICampaignRatingDeleteService _campaignRatingDeleteService = campaignRatingDeleteService;
+    private readonly IValidator<CampaignRatingCreateRequestDto> _campaignRatingCreateValidator = campaignRatingCreateRequestValidator;
     private readonly IValidator<CampaignRatingUpdateRequestDto> _campaignRatingUpdateValidator = campaignRatingUpdateRequestValidator;
 
     [HttpPost("create", Name = nameof(CreateCampaignRating))]
@@ -50,6 +52,14 @@ public class CampaignRatingController(
             return BadRequestProblemDetails("Unable to identify user");
         }
         
+        var modelValidationResult = await _campaignRatingCreateValidator.ValidateAsync(createRequest);
+        if (!modelValidationResult.IsValid)
+        {
+            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
+                title: "Failed to update campaign rating.",
+                detail: "Make sure all the required fields are properly entered.");
+        }
+        
         var result = await _campaignRatingCreateService.CreateCampaignRatingAsync(
             createRequest,
             parsedUserId
@@ -60,12 +70,12 @@ public class CampaignRatingController(
             return result.Errors.ToDetailedBadRequest();
         }
 
-        var CampaignRating = result.Value;
+        var campaignRating = result.Value;
         
         return CreatedAtRoute(
             nameof(GetCampaignRating),
-            new { id = CampaignRating.Id },
-            CampaignRating
+            new { id = campaignRating.Id },
+            campaignRating
             );
     }
 
@@ -92,14 +102,6 @@ public class CampaignRatingController(
         [FromBody] CampaignRatingUpdateRequestDto updateRequestDto
     )
     {
-        var modelValidationResult = await _campaignRatingUpdateValidator.ValidateAsync(updateRequestDto);
-        if (!modelValidationResult.IsValid)
-        {
-            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
-                title: "Failed to update campaign rating.",
-                detail: "Make sure all the required fields are properly entered.");
-        }
-        
         if (!Guid.TryParse(id, out var campaignRatingId))
         {
             return BadRequestProblemDetails("Invalid ID format");
@@ -120,6 +122,14 @@ public class CampaignRatingController(
         if (!Guid.TryParse(userId, out var parsedUserId))
         {
             return BadRequestProblemDetails("Unable to identify user.");
+        }
+        
+        var modelValidationResult = await _campaignRatingUpdateValidator.ValidateAsync(updateRequestDto);
+        if (!modelValidationResult.IsValid)
+        {
+            return modelValidationResult.Errors.ToValidatingDetailedBadRequest(
+                title: "Failed to update campaign rating.",
+                detail: "Make sure all the required fields are properly entered.");
         }
 
         var updatedResult = await _campaignRatingUpdateService.UpdateCampaignRatingAsync(

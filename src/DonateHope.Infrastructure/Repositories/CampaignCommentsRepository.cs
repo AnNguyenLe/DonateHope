@@ -54,9 +54,38 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
         return await dbConnection.ExecuteAsync(sqlCommand, campaignComment);
     }
 
-    public IQueryable<CampaignComment> GetCampaignComments(Expression<Func<CampaignComment, bool>> predicate)
+    public async Task<IEnumerable<CampaignComment>> GetCommentsByCampaignId(Guid campaignId)
     {
-        return _dbContext.CampaignComments.Where(predicate);
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+        var sqlCommand = """
+        SELECT 
+            id,
+            content, 
+            created_at AS CreatedAt, 
+            updated_at AS UpdatedAt, 
+            created_by AS CreatedBy, 
+            updated_by AS UpdatedBy,
+            is_deleted AS IsDeleted,
+            deleted_at AS DeletedAt,
+            deleted_by AS DeletedBy,
+            is_banned AS IsBanned, 
+            user_id AS UserId,
+            campaign_id AS CampaignId
+        FROM 
+            campaign_comments
+        WHERE 
+            campaign_id = @CampaignId
+            AND is_deleted = false
+        ORDER BY 
+            created_at DESC;
+    """;
+
+        var comments = await dbConnection.QueryAsync<CampaignComment>(
+            sqlCommand,
+            new { CampaignId = campaignId }
+        );
+
+        return comments;
     }
 
     public async Task<Result<CampaignComment>> GetCampaignCommentById(Guid campaignCommentId)
@@ -96,9 +125,7 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
 
 
     public async Task<Result<int>> DeleteCampaignComment(
-        Guid campaignCommentId,
-        Guid deletedBy,
-        string reasonForDeletion
+        Guid campaignCommentId, Guid deletedBy
         )
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
@@ -107,8 +134,7 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
                          SET
                             is_deleted = @isDeleted,
                             deleted_at = @deletedAt,
-                            deleted_by = @deletedBy,
-                            reason_for_deletion = @reasonForDeletion
+                            deleted_by = @deletedBy
                          WHERE id = @campaignCommentId
                          """;
         var totalAffectedRows = await dbConnection.ExecuteAsync(
@@ -118,7 +144,6 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
                 isDeleted = true,
                 deletedAt = DateTime.UtcNow,
                 deletedBy,
-                reasonForDeletion,
                 campaignCommentId
             });
         if (totalAffectedRows == 0)

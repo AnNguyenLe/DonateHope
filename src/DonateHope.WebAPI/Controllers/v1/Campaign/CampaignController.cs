@@ -8,7 +8,6 @@ using DonateHope.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualBasic;
 
 namespace DonateHope.WebAPI.Controllers.v1.Campaign;
 
@@ -30,6 +29,26 @@ public class CampaignController(
     private readonly ICampaignCreateService _campaignCreateService = campaignCreateService;
     private readonly ICampaignRetrieveService _campaignRetrieveService = campaignRetrieveService;
     private readonly ICampaignUpdateService _campaignUpdateService = campaignUpdateService;
+
+    [HttpGet(Name = nameof(GetCampaigns))]
+    public async Task<ActionResult<IEnumerable<CampaignGetResponseDto>>> GetCampaigns()
+    {
+        var userId = _userManager.GetUserId(User);
+
+        if (userId is null)
+        {
+            return BadRequestProblemDetails("Unable to identify user.");
+        }
+
+        var result = await _campaignRetrieveService.GetCampaigns();
+
+        if (result.IsFailed)
+        {
+            return result.Errors.ToDetailedBadRequest();
+        }
+
+        return Ok(result.Value);
+    }
 
     [HttpPost("create", Name = nameof(CreateCampaign))]
     public async Task<ActionResult<CampaignGetResponseDto>> CreateCampaign(

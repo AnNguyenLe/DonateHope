@@ -27,5 +27,21 @@ public class CampaignCommentRetrieveService(
 
         return _campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto(campaignCommentResult.Value);
     }
+    public async Task<Result<IEnumerable<CampaignCommentGetResponseDto>>> GetCommentsByCampaignId(Guid campaignId)
+{
+    // Lấy dữ liệu từ repository
+    var comments = await _campaignCommentsRepository.GetCommentsByCampaignId(campaignId);
+
+    // Nếu không có bình luận, trả về lỗi
+    if (comments == null || !comments.Any())
+    {
+        return new ProblemDetailsError($"No comments found for Campaign ID: {campaignId}");
+    }
+
+    // Ánh xạ dữ liệu từ entity sang DTO
+    var commentDtos = comments.Select(_campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto);
+
+    return Result.Ok(commentDtos);
+}
 }
 

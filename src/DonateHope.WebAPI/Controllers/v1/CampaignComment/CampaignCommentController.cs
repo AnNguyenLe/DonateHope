@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 namespace DonateHope.WebAPI.Controllers.v1.CampaignComment;
 
 [ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/campaign-comment")]
+[Route("api/v{version:apiVersion}")]
 [ApiController]
 public class CampaignCommentController(
     ICampaignCommentCreateService campaignCommentCreateService,
@@ -33,7 +33,7 @@ public class CampaignCommentController(
     private readonly ICampaignCommentUpdateService _campaignCommentUpdateService = campaignCommentUpdateService;
     private readonly ICampaignCommentDeleteService _campaignCommentDeleteService = campaignCommentDeleteService;
 
-    [HttpPost("create", Name = nameof(CreateCampaignComment))]
+    [HttpPost("campaign-comment/create", Name = nameof(CreateCampaignComment))]
     public async Task<ActionResult<CampaignCommentGetResponseDto>> CreateCampaignComment(
         [FromBody] CampaignCommentCreateRequestDto createRequest
     )
@@ -48,7 +48,7 @@ public class CampaignCommentController(
         {
             return BadRequestProblemDetails("Unable to identify user");
         }
-        var result = await _campaignCommentCreateService.CreateCampaignCommentAsync(createRequest, userId);
+        var result = await _campaignCommentCreateService.CreateCampaignCommentAsync(createRequest, parsedUserId);
 
         if (result.IsFailed)
         {
@@ -62,11 +62,9 @@ public class CampaignCommentController(
             new { id = campaignComment.Id },
             // _campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto(campaignComment)
             campaignComment
-
         );
     }
-
-    [HttpGet("{id}", Name = nameof(GetCampaignComment))]
+    [HttpGet("campaign-comment/{id}", Name = nameof(GetCampaignComment))]
     public async Task<ActionResult<CampaignCommentGetResponseDto>> GetCampaignComment([FromRoute] Guid id)
     {
         var userId = _userManager.GetUserId(User);
@@ -84,7 +82,7 @@ public class CampaignCommentController(
 
         return result.Value;
     }
-    [HttpPut("{id}", Name = nameof(UpdateCampaignComment))]
+    [HttpPut("campaign-comment/{id}", Name = nameof(UpdateCampaignComment))]
     public async Task<ActionResult<CampaignCommentUpdateRequestDto>> UpdateCampaignComment([FromRoute] string id, [FromBody] CampaignCommentUpdateRequestDto updateCampaignCommentDto)
     {
         if (!Guid.TryParse(id, out var campaignCommentId))
@@ -121,10 +119,9 @@ public class CampaignCommentController(
 
         return NoContent();
     }
-    [HttpDelete("{id}", Name = nameof(DeleteCampaignComment))]
-    public async Task<ActionResult<CampaignCommentDeleteDto>> DeleteCampaignComment(
-        [FromRoute] string id,
-        [FromBody] CampaignCommentDeleteRequestDto reasonForDeletionRequestDto)
+    [HttpDelete("campaign-comment/{id}", Name = nameof(DeleteCampaignComment))]
+    public async Task<ActionResult> DeleteCampaignComment(
+        [FromRoute] string id)
     {
         if (!Guid.TryParse(id, out var campaignCommentId))
         {
@@ -143,9 +140,7 @@ public class CampaignCommentController(
         }
 
         var result = await _campaignCommentDeleteService.DeleteCampaignCommentAsync(
-            campaignCommentId,
-            deletedBy,
-            reasonForDeletionRequestDto.ReasonForDeletion
+            campaignCommentId, deletedBy
             );
 
         if (result.IsFailed)
@@ -153,5 +148,6 @@ public class CampaignCommentController(
             return result.Errors.ToDetailedBadRequest();
         }
         return Ok();
+       return Ok();
     }
 }
