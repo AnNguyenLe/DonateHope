@@ -20,6 +20,8 @@ public class CampaignRatingsRepository(
     public async Task<Result<int>> AddCampaignRating(CampaignRating campaignRating)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+        using var transaction = dbConnection.BeginTransaction();
+        
         var sqlCommand = """
                          INSERT INTO campaign_ratings
                              (
@@ -48,13 +50,42 @@ public class CampaignRatingsRepository(
                                 @CampaignId
                              )
                          """;
-        var totalAffectedRows = await dbConnection.ExecuteAsync(sqlCommand, campaignRating);
-        if (totalAffectedRows == 0)
+        var addRatingResult = await dbConnection.ExecuteAsync(sqlCommand, campaignRating, transaction);
+        if (addRatingResult == 0)
         {
+            transaction.Rollback();
             return new ProblemDetailsError("Failed to add campaign rating.");
         }
         
-        return totalAffectedRows;
+        var updateCampaignSqlCommand = """
+                                       UPDATE campaigns
+                                       SET
+                                        number_of_ratings = number_of_ratings + 1,
+                                        average_rating_point = @AverageRatingPoint
+                                       WHERE id = @CampaignId;
+                                       """;
+        
+        var averageRatingPoint = await dbConnection.QueryFirstOrDefaultAsync<double>(
+            "SELECT SUM(rating_point)/COUNT(id) FROM campaign_ratings WHERE campaign_id = @CampaignId", 
+            new { CampaignId = campaignRating.CampaignId }, 
+            transaction);
+        
+        var updateCampaignResult = await dbConnection.ExecuteAsync(updateCampaignSqlCommand, 
+            new
+            {
+                CampaignId = campaignRating.CampaignId,
+                AverageRatingPoint = averageRatingPoint
+            }, transaction);
+
+        if (updateCampaignResult == 0)
+        {
+            transaction.Rollback();
+            return new ProblemDetailsError("Failed to update campaign achieved amount.");
+        }
+        
+        transaction.Commit();
+        
+        return addRatingResult;
     }
 
     public async Task<Result<int>> DeleteCampaignRating(
