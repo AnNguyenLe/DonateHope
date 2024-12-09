@@ -12,4 +12,6 @@ public class CampaignCommentGetResponseDto
     public DateTime? UpdatedAt { get; set; }
     public Guid? UpdatedBy { get; set; }
     public Guid? UserId { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
 }
