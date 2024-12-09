@@ -80,7 +80,7 @@ public class CampaignRatingsRepository(
         if (updateCampaignResult == 0)
         {
             transaction.Rollback();
-            return new ProblemDetailsError("Failed to update campaign achieved amount.");
+            return new ProblemDetailsError("Failed to update rating in campaign table.");
         }
         
         transaction.Commit();
