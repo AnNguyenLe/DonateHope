@@ -40,6 +40,30 @@ public class JwtService(ILogger<JwtService> logger, IOptions<JwtConfiguration> j
         };
     }
 
+    public AccessTokenData GenerateCharityAccessToken(AppUser user)
+    {
+        _logger.LogInformation(nameof(GenerateAccessToken));
+
+        var expiresAt = DateTime.UtcNow.AddHours(_jwtConfiguration.AccessTokenLifeTimeInHours);
+
+        var claims = new Claim[]
+        {
+            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
+            new(JwtRegisteredClaimNames.Exp, expiresAt.ToString()),
+            new(ClaimTypes.NameIdentifier, user.Email!),
+            new(ClaimTypes.Name, user.Email!),
+            new(ClaimTypes.GivenName, $"{user.FirstName} {user.LastName}"),
+            new(ClaimTypes.Role, "charityOrganization"),
+        };
+
+        return new AccessTokenData
+        {
+            AccessToken = GenerateJwtToken(claims, expiresAt),
+            ExpiresAt = expiresAt
+        };
+    }
+
     private string GenerateJwtToken(IEnumerable<Claim> claims, DateTime expiresAt)
     {
         _logger.LogInformation(nameof(GenerateJwtToken));

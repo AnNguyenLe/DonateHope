@@ -1,4 +1,5 @@
 using System.Web;
+using DonateHope.Core.Common.Authorization;
 using DonateHope.Core.DTOs.Authentication;
 using DonateHope.Core.Errors;
 using DonateHope.Core.ServiceContracts.Authentication;
@@ -82,6 +83,7 @@ public class AuthenticationService(
             FirstName = user.FirstName,
             LastName = user.LastName,
             Email = user.Email!,
+            IsCharityOrg = false,
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
             RefreshToken = string.Empty //TODO: RefreshToken Needed!
@@ -123,11 +125,14 @@ public class AuthenticationService(
 
         var accessTokenData = _jwtService.GenerateAccessToken(user);
 
+        var userRoles = await _userManager.GetRolesAsync(user);
+
         return new AuthenticationResponse
         {
             FirstName = user.FirstName ?? "Unknown Firstname",
             LastName = user.LastName ?? "Unknown Lastname",
             Email = user.Email!,
+            IsCharityOrg = userRoles.HasRole(AppUserRoles.CHARITY),
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
             RefreshToken = string.Empty //TODO: RefreshToken Needed!
@@ -160,11 +165,13 @@ public class AuthenticationService(
 
         var accessTokenData = _jwtService.GenerateAccessToken(user);
 
+        var userRoles = await _userManager.GetRolesAsync(user);
         return new AuthenticationResponse()
         {
             FirstName = user.FirstName ?? "Unknown Firstname",
             LastName = user.LastName ?? "Unknown Lastname",
             Email = request.Email,
+            IsCharityOrg = userRoles.HasRole(AppUserRoles.CHARITY),
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
             RefreshToken = string.Empty //TODO: RefreshToken Needed!
@@ -255,5 +262,66 @@ public class AuthenticationService(
             confirmationTemplate
         );
         _logger.LogInformation("Reset Password Email Confirmation sent.");
+    }
+
+    public async Task<Result<AuthenticationResponse>> RegisterAsCharityAsync(
+        RegistrationAsCharityRequest request
+    )
+    {
+        var existingUser = await _userManager.FindByEmailAsync(request.OrgEmail);
+
+        if (existingUser is not null)
+        {
+            if (await _userManager.IsEmailConfirmedAsync(existingUser))
+            {
+                return new ProblemDetailsError(
+                    title: "Existing account.",
+                    detail: "Please signing in using this email and your password."
+                );
+            }
+
+            return new ProblemDetailsError(
+                title: "Action required: Please confirm your email to verify you are the real user.",
+                detail: "This email had been registered but not yet to be confirmed. Please go to your mailnox and click the confirm button."
+            );
+        }
+
+        var user = new AppUser()
+        {
+            FirstName = request.OrgName,
+            LastName = string.Empty,
+            Email = request.OrgEmail,
+            UserName = request.OrgEmail,
+        };
+
+        var createUserResult = await _userManager.CreateAsync(user, request.Password);
+
+        if (!createUserResult.Succeeded)
+        {
+            _logger.LogWarning("Failed to register new charity.");
+
+            return new ProblemDetailsError(
+                title: "Failed to register new charity.",
+                detail: "Make sure all the required fields are properly entered."
+            );
+        }
+
+        // Enable this feature if you want to send register confirmation email
+        // await SendRegisterConfirmationEmailAsync(user);
+
+        await _signInManager.SignInAsync(user, false);
+
+        var accessTokenData = _jwtService.GenerateCharityAccessToken(user);
+
+        return new AuthenticationResponse
+        {
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email!,
+            IsCharityOrg = true,
+            AccessToken = accessTokenData.AccessToken,
+            ExpiryOfAccessToken = accessTokenData.ExpiresAt,
+            RefreshToken = string.Empty //TODO: RefreshToken Needed!
+        };
     }
 }

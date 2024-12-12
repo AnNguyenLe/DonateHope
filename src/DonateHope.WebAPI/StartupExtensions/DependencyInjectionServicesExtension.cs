@@ -42,6 +42,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ISmtpClientProvider, SmtpClientProvider>();
 
         services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
+        services.AddValidatorsFromAssemblyContaining<RegistrationAsCharityRequestValidator>();
 
         services.TryAddSingleton<IDbConnectionFactory>(_ => new NpgsqlDbConnectionFactory(
             configuration.GetConnectionString("Default")!
@@ -52,17 +53,29 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignCreateService, CampaignCreateService>();
         services.TryAddScoped<ICampaignRetrieveService, CampaignRetrieveService>();
         services.TryAddScoped<ICampaignUpdateService, CampaignUpdateService>();
-        
+
         services.TryAddScoped<ICampaignContributionsRepository, CampaignContributionsRepository>();
         services.TryAddSingleton<CampaignContributionMapper>();
-        services.TryAddScoped<ICampaignContributionCreateService, CampaignContributionCreateService>();
-        services.TryAddScoped<ICampaignContributionRetrieveService, CampaignContributionRetrieveService>();
-        services.TryAddScoped<ICampaignContributionUpdateService, CampaignContributionUpdateService>();
-        services.TryAddScoped<ICampaignContributionDeleteService, CampaignContributionDeleteService>();
+        services.TryAddScoped<
+            ICampaignContributionCreateService,
+            CampaignContributionCreateService
+        >();
+        services.TryAddScoped<
+            ICampaignContributionRetrieveService,
+            CampaignContributionRetrieveService
+        >();
+        services.TryAddScoped<
+            ICampaignContributionUpdateService,
+            CampaignContributionUpdateService
+        >();
+        services.TryAddScoped<
+            ICampaignContributionDeleteService,
+            CampaignContributionDeleteService
+        >();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionCreateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionUpdateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignContributionDeleteRequestValidator>();
-        
+
         services.TryAddScoped<ICampaignRatingsRepository, CampaignRatingsRepository>();
         services.TryAddSingleton<CampaignRatingMapper>();
         services.TryAddScoped<ICampaignRatingCreateService, CampaignRatingCreateService>();
@@ -71,7 +84,7 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignRatingDeleteService, CampaignRatingDeleteService>();
         services.AddValidatorsFromAssemblyContaining<CampaignRatingCreateRequestValidator>();
         services.AddValidatorsFromAssemblyContaining<CampaignRatingUpdateRequestValidator>();
-        
+
         services.TryAddScoped<ICampaignReportsRepository, CampaignReportsRepository>();
         services.TryAddSingleton<CampaignReportMapper>();
         services.TryAddScoped<ICampaignReportCreateService, CampaignReportCreateService>();
@@ -79,14 +92,14 @@ public static class DependencyInjectionServicesExtension
         services.TryAddScoped<ICampaignReportUpdateService, CampaignReportUpdateService>();
         services.TryAddScoped<ICampaignReportDeleteService, CampaignReportDeleteService>();
         services.AddValidatorsFromAssemblyContaining<CampaignReportDeleteRequestValidator>();
-        
+
         services.TryAddScoped<ICampaignCommentsRepository, CampaignCommentsRepository>();
         services.TryAddSingleton<CampaignCommentMapper>();
         services.TryAddScoped<ICampaignCommentCreateService, CampaignCommentCreateService>();
         services.TryAddScoped<ICampaignCommentRetrieveService, CampaignCommentRetrieveService>();
         services.TryAddScoped<ICampaignCommentUpdateService, CampaignCommentUpdateService>();
         services.TryAddScoped<ICampaignCommentDeleteService, CampaignCommentDeleteService>();
-        
+
         return services;
     }
 }

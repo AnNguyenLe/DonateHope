@@ -65,7 +65,7 @@ public static class ConfigureServicesExtension
                 "v1",
                 new Microsoft.OpenApi.Models.OpenApiInfo()
                 {
-                    Title = "Weather Forecast Web API",
+                    Title = "DonateHope Web API",
                     Version = "1.0"
                 }
             );
@@ -74,7 +74,7 @@ public static class ConfigureServicesExtension
                 "v2",
                 new Microsoft.OpenApi.Models.OpenApiInfo()
                 {
-                    Title = "Weather Forecast Web API",
+                    Title = "DonateHope Web API",
                     Version = "2.0"
                 }
             );

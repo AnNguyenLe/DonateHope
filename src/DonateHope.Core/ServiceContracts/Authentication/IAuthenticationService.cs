@@ -14,4 +14,7 @@ public interface IAuthenticationService
     Task<Result> ForgotPasswordAsync(ForgotPasswordRequest request);
 
     Task<Result> ResetPasswordAsync(ResetPasswordRequest request);
+    Task<Result<AuthenticationResponse>> RegisterAsCharityAsync(
+        RegistrationAsCharityRequest request
+    );
 }
