@@ -306,6 +306,8 @@ public class AuthenticationService(
             );
         }
 
+        await _userManager.AddToRoleAsync(user, AppUserRoles.CHARITY);
+
         // Enable this feature if you want to send register confirmation email
         // await SendRegisterConfirmationEmailAsync(user);
 
