@@ -262,8 +262,14 @@ public class CampaignContributionsRepository(
                          SELECT
                              cc.id AS Id,
                              cc.campaign_id AS CampaignId,
-                             COALESCE(cc.donator_name, au.first_name || ' ' || au.last_name) AS DonatorName,
-                             COALESCE(cc.message, 'No message provided.') AS Message,
+                             CASE
+                                 WHEN cc.donator_name IS NULL OR cc.donator_name = '' THEN au.first_name || ' ' || au.last_name
+                                 ELSE cc.donator_name
+                             END AS DonatorName,
+                             CASE
+                                 WHEN cc.message IS NULL OR cc.message = '' THEN 'No message provided.'
+                                 ELSE cc.message
+                             END AS Message,
                              cc.contribution_method AS ContributionMethod,
                              cc.unit_of_measurement AS UnitOfMeasurement,
                              cc.amount AS Amount,
