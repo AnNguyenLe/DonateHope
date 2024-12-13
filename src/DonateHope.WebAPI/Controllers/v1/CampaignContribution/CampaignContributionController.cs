@@ -97,6 +97,23 @@ public class CampaignContributionController(
         }
         return result.Value;
     }
+    
+    [HttpGet("campaign-contributions/{campaignId}", Name = nameof(GetCampaignContributionsByCampaignId))]
+    public async Task<ActionResult<IEnumerable<CampaignContributionGetResponseDto>>> GetCampaignContributionsByCampaignId([FromRoute] Guid campaignId)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null)
+        {
+            return BadRequestProblemDetails("Unable to identify user");
+        }
+        var result = await _campaignContributionRetrieveService.GetCampaignContributionsByCampaignIdAsync(campaignId);
+
+        if (result.IsFailed)
+        {
+            return result.Errors.ToDetailedBadRequest();
+        }
+        return result.Value.ToList();
+    }
 
     [HttpPut("{id}", Name = nameof(UpdateCampaignContribution))]
     public async Task<ActionResult<CampaignContributionGetResponseDto>> UpdateCampaignContribution(

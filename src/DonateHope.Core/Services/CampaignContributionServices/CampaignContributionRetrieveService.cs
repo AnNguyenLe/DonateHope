@@ -34,4 +34,29 @@ public class CampaignContributionRetrieveService(
         _logger.LogInformation("Successfully retrieved campaign contribution {CampaignContributionId}", campaignContributionId);
         return _campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto(campaignContributionResult.Value);;
     }
+
+    public async Task<Result<IEnumerable<CampaignContributionGetResponseDto>>> GetCampaignContributionsByCampaignIdAsync(
+        Guid campaignId)
+    {
+        var campaignContributionsResult = await _campaignContributionsRepository.GetCampaignContributionsByCampaignId(campaignId);
+        if (campaignContributionsResult.IsFailed)
+        {
+            _logger.LogWarning(
+                "Failed to retrieve campaign contributions for campaign {campaignId}. Error: {ErrorMessage}",
+                campaignId,
+                campaignContributionsResult.Errors.First().Message
+                );
+            return new ProblemDetailsError(campaignContributionsResult.Errors.First().Message);
+        }
+
+        var campaignContributionDtos = campaignContributionsResult.Value
+            .Select(_campaignContributionMapper.MapCampaignContributionToCampaignContributionGetResponseDto)
+            .ToArray();
+        
+        _logger.LogInformation("Successfully retrieved {Count} contributions for campaign {campaignId}",
+            campaignContributionDtos.Length,
+            campaignId);
+        
+        return campaignContributionDtos;
+    }
 }
