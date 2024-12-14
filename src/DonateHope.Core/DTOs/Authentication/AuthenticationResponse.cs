@@ -9,4 +9,5 @@ public class AuthenticationResponse
     public DateTime ExpiryOfAccessToken { get; set; }
     public required string RefreshToken { get; set; }
     public required bool IsCharityOrg { get; set; }
+    public required bool IsAdmin { get; set; }
 }

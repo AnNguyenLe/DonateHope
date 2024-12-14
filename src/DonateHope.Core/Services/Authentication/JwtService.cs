@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using DonateHope.Core.Common.Authorization;
 using DonateHope.Core.ConfigurationOptions.Jwt;
 using DonateHope.Core.ServiceContracts.Authentication;
 using DonateHope.Domain.IdentityEntities;
@@ -16,22 +17,29 @@ public class JwtService(ILogger<JwtService> logger, IOptions<JwtConfiguration> j
     private readonly ILogger<JwtService> _logger = logger;
     private readonly JwtConfiguration _jwtConfiguration = jwtConfiguration.Value;
 
-    public AccessTokenData GenerateAccessToken(AppUser user)
+    public AccessTokenData GenerateAccessToken(AppUser user, List<string> roles)
     {
         _logger.LogInformation(nameof(GenerateAccessToken));
 
         var expiresAt = DateTime.UtcNow.AddHours(_jwtConfiguration.AccessTokenLifeTimeInHours);
 
-        var claims = new Claim[]
-        {
+        List<Claim> claims =
+        [
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            // new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
             new(JwtRegisteredClaimNames.Exp, expiresAt.ToString()),
             new(ClaimTypes.NameIdentifier, user.Email!),
             new(ClaimTypes.Name, user.Email!),
             new(ClaimTypes.GivenName, $"{user.FirstName} {user.LastName}"),
-        };
+        ];
+
+        if (roles.Count > 0)
+        {
+            roles.ForEach(role =>
+            {
+                claims.Add(new(ClaimTypes.Role, role));
+            });
+        }
 
         return new AccessTokenData
         {
@@ -40,22 +48,30 @@ public class JwtService(ILogger<JwtService> logger, IOptions<JwtConfiguration> j
         };
     }
 
-    public AccessTokenData GenerateCharityAccessToken(AppUser user)
+    public AccessTokenData GenerateCharityAccessToken(AppUser user, List<string> roles)
     {
         _logger.LogInformation(nameof(GenerateAccessToken));
 
         var expiresAt = DateTime.UtcNow.AddHours(_jwtConfiguration.AccessTokenLifeTimeInHours);
 
-        var claims = new Claim[]
-        {
+        List<Claim> claims =
+        [
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
             new(JwtRegisteredClaimNames.Exp, expiresAt.ToString()),
             new(ClaimTypes.NameIdentifier, user.Email!),
             new(ClaimTypes.Name, user.Email!),
             new(ClaimTypes.GivenName, $"{user.FirstName} {user.LastName}"),
-            new(ClaimTypes.Role, "charityOrganization"),
-        };
+            new(ClaimTypes.Role, AppUserRoles.CHARITY),
+        ];
+
+        if (roles.Count > 0)
+        {
+            roles.ForEach(role =>
+            {
+                claims.Add(new(ClaimTypes.Role, role));
+            });
+        }
 
         return new AccessTokenData
         {

@@ -76,7 +76,9 @@ public class AuthenticationService(
 
         await _signInManager.SignInAsync(user, false);
 
-        var accessTokenData = _jwtService.GenerateAccessToken(user);
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var accessTokenData = _jwtService.GenerateAccessToken(user, [.. userRoles]);
 
         return new AuthenticationResponse
         {
@@ -86,7 +88,8 @@ public class AuthenticationService(
             IsCharityOrg = false,
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
-            RefreshToken = string.Empty //TODO: RefreshToken Needed!
+            RefreshToken = string.Empty, //TODO: RefreshToken Needed!
+            IsAdmin = userRoles.HasRole(AppUserRoles.ADMIN),
         };
     }
 
@@ -123,9 +126,9 @@ public class AuthenticationService(
 
         await _signInManager.SignInAsync(user, false);
 
-        var accessTokenData = _jwtService.GenerateAccessToken(user);
-
         var userRoles = await _userManager.GetRolesAsync(user);
+
+        var accessTokenData = _jwtService.GenerateAccessToken(user, [.. userRoles]);
 
         return new AuthenticationResponse
         {
@@ -135,7 +138,8 @@ public class AuthenticationService(
             IsCharityOrg = userRoles.HasRole(AppUserRoles.CHARITY),
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
-            RefreshToken = string.Empty //TODO: RefreshToken Needed!
+            RefreshToken = string.Empty, //TODO: RefreshToken Needed!
+            IsAdmin = userRoles.HasRole(AppUserRoles.ADMIN)
         };
     }
 
@@ -163,9 +167,10 @@ public class AuthenticationService(
             );
         }
 
-        var accessTokenData = _jwtService.GenerateAccessToken(user);
-
         var userRoles = await _userManager.GetRolesAsync(user);
+
+        var accessTokenData = _jwtService.GenerateAccessToken(user, [.. userRoles]);
+
         return new AuthenticationResponse()
         {
             FirstName = user.FirstName ?? "Unknown Firstname",
@@ -174,7 +179,8 @@ public class AuthenticationService(
             IsCharityOrg = userRoles.HasRole(AppUserRoles.CHARITY),
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
-            RefreshToken = string.Empty //TODO: RefreshToken Needed!
+            RefreshToken = string.Empty, //TODO: RefreshToken Needed!
+            IsAdmin = userRoles.HasRole(AppUserRoles.ADMIN)
         };
     }
 
@@ -313,7 +319,9 @@ public class AuthenticationService(
 
         await _signInManager.SignInAsync(user, false);
 
-        var accessTokenData = _jwtService.GenerateCharityAccessToken(user);
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var accessTokenData = _jwtService.GenerateCharityAccessToken(user, [.. userRoles]);
 
         return new AuthenticationResponse
         {
@@ -323,7 +331,8 @@ public class AuthenticationService(
             IsCharityOrg = true,
             AccessToken = accessTokenData.AccessToken,
             ExpiryOfAccessToken = accessTokenData.ExpiresAt,
-            RefreshToken = string.Empty //TODO: RefreshToken Needed!
+            RefreshToken = string.Empty, //TODO: RefreshToken Needed!
+            IsAdmin = userRoles.HasRole(AppUserRoles.ADMIN)
         };
     }
 }
