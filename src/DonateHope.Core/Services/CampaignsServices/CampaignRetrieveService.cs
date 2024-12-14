@@ -1,7 +1,9 @@
+using System.Linq.Expressions;
 using DonateHope.Core.DTOs.CampaignDTOs;
 using DonateHope.Core.Errors;
 using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
+using DonateHope.Domain.Entities;
 using DonateHope.Domain.RepositoryContracts;
 using FluentResults;
 
@@ -36,6 +38,26 @@ public class CampaignRetrieveService(
         }
 
         var campaignDtos = campaignsListQuery.Value.Select(
+            _campaignMapper.MapCampaignToCampaignGetResponseDto
+        );
+
+        return Result.Ok(campaignDtos);
+    }
+
+    public async Task<Result<IEnumerable<CampaignGetResponseDto>>> FilterCampaigns(string keyword)
+    {
+        Expression<Func<Campaign, bool>> matchedExpression = campaign =>
+            campaign.IsDeleted == false
+            && (campaign.Title ?? string.Empty).ToLower().Contains(keyword.ToLower());
+
+        var queryResult = await _campaignsRepository.GetCampaigns(matchedExpression);
+
+        if (queryResult.IsFailed)
+        {
+            return new ProblemDetailsError(queryResult.Errors.First().Message);
+        }
+
+        var campaignDtos = queryResult.Value.Select(
             _campaignMapper.MapCampaignToCampaignGetResponseDto
         );
 

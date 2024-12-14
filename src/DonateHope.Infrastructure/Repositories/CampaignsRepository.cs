@@ -155,7 +155,10 @@ public class CampaignsRepository(
         Expression<Func<Campaign, bool>> predicate
     )
     {
-        return await _dbContext.Campaigns.Where(predicate).ToListAsync();
+        return await _dbContext
+            .Campaigns.Where(predicate)
+            .OrderByDescending(campaign => campaign.CreatedAt)
+            .ToListAsync();
     }
 
     public async Task<Result<List<Campaign>>> GetCampaigns()
