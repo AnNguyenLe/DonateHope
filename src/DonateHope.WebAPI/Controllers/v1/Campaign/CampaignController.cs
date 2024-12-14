@@ -32,7 +32,8 @@ public class CampaignController(
     private readonly ICampaignCreateService _campaignCreateService = campaignCreateService;
     private readonly ICampaignRetrieveService _campaignRetrieveService = campaignRetrieveService;
     private readonly ICampaignUpdateService _campaignUpdateService = campaignUpdateService;
-    private readonly ICampaignContributionRetrieveService _campaignContributionRetrieveService = campaignContributionRetrieveService;
+    private readonly ICampaignContributionRetrieveService _campaignContributionRetrieveService =
+        campaignContributionRetrieveService;
 
     [HttpGet(Name = nameof(GetCampaigns))]
     public async Task<ActionResult<IEnumerable<CampaignGetResponseDto>>> GetCampaigns()
@@ -151,21 +152,41 @@ public class CampaignController(
 
         return NoContent();
     }
-    
+
     [HttpGet("{id}/contribution/report", Name = nameof(GetCampaignContributionsByCampaignId))]
-    public async Task<ActionResult<IEnumerable<CampaignContributionGetResponseDto>>> GetCampaignContributionsByCampaignId([FromRoute] Guid id)
+    public async Task<
+        ActionResult<IEnumerable<CampaignContributionGetResponseDto>>
+    > GetCampaignContributionsByCampaignId([FromRoute] Guid id)
     {
         var userId = _userManager.GetUserId(User);
         if (userId is null)
         {
             return BadRequestProblemDetails("Unable to identify user");
         }
-        var result = await _campaignContributionRetrieveService.GetCampaignContributionsByCampaignIdAsync(id);
+        var result =
+            await _campaignContributionRetrieveService.GetCampaignContributionsByCampaignIdAsync(
+                id
+            );
 
         if (result.IsFailed)
         {
             return result.Errors.ToDetailedBadRequest();
         }
         return result.Value.ToList();
+    }
+
+    [HttpGet("search", Name = nameof(SearchCampaign))]
+    public async Task<ActionResult<CampaignGetResponseDto>> SearchCampaign(
+        [FromQuery] string keyword
+    )
+    {
+        var result = await _campaignRetrieveService.FilterCampaigns(keyword);
+
+        if (result.IsFailed)
+        {
+            return result.Errors.ToDetailedBadRequest();
+        }
+
+        return Ok(result.Value);
     }
 }
