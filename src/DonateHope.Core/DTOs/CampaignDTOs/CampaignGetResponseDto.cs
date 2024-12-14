@@ -26,4 +26,5 @@ public class CampaignGetResponseDto
     public Guid? CreatedBy { get; set; }
     public Guid? UpdatedBy { get; set; }
     public CampaignStatus? CampaignStatus { get; set; }
+    public Guid UserId { get; set; }
 }
