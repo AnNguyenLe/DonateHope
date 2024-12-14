@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq.Expressions;
 using DonateHope.Domain.Entities;
 using FluentResults;
@@ -12,4 +13,5 @@ public interface ICampaignContributionsRepository
     Task<Result<int>> UpdateCampaignContribution(CampaignContribution updateCampaignContribution);
     Task<Result<int>> DeleteCampaignContribution(Guid campaignContributionId, Guid deletedBy, string reasonForDeletion);
     Task<Result<int>> DeleteCampaignContributionPermanently(Guid campaignContributionId);
+    Task<Result<IEnumerable<CampaignContribution>>> GetCampaignContributionsByCampaignId(Guid campaignId);
 }

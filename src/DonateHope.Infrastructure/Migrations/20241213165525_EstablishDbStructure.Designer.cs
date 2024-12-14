@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DonateHope.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241110084832_EstablishDbStructure")]
+    [Migration("20241213165525_EstablishDbStructure")]
     partial class EstablishDbStructure
     {
         /// <inheritdoc />
@@ -195,6 +195,10 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("deleted_by");
 
+                    b.Property<string>("FirstName")
+                        .HasColumnType("text")
+                        .HasColumnName("first_name");
+
                     b.Property<bool>("IsBanned")
                         .HasColumnType("boolean")
                         .HasColumnName("is_banned");
@@ -202,6 +206,10 @@ namespace DonateHope.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("text")
+                        .HasColumnName("last_name");
 
                     b.Property<string>("ReasonForDeletion")
                         .HasColumnType("text")
@@ -266,9 +274,17 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("deleted_by");
 
+                    b.Property<string>("DonatorName")
+                        .HasColumnType("text")
+                        .HasColumnName("donator_name");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
 
                     b.Property<string>("ReasonForDeletion")
                         .HasColumnType("text")
@@ -440,7 +456,7 @@ namespace DonateHope.Infrastructure.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("amount");
 
-                    b.Property<Guid?>("CampaignId")
+                    b.Property<Guid>("CampaignId")
                         .HasColumnType("uuid")
                         .HasColumnName("campaign_id");
 
@@ -924,6 +940,8 @@ namespace DonateHope.Infrastructure.Migrations
                     b.HasOne("DonateHope.Domain.Entities.Campaign", null)
                         .WithMany("CampaignReports")
                         .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_campaign_reports_campaigns_campaign_id");
                 });
 

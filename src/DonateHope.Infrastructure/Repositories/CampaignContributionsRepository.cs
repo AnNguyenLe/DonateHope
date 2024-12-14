@@ -29,6 +29,8 @@ public class CampaignContributionsRepository(
                                 amount,
                                 unit_of_measurement,
                                 contribution_method,
+                                donator_name,
+                                message,
                                 created_at,
                                 updated_at,
                                 created_by,
@@ -43,6 +45,8 @@ public class CampaignContributionsRepository(
                                 @Amount,
                                 @UnitOfMeasurement,
                                 @ContributionMethod,
+                                @DonatorName,
+                                @Message,
                                 @CreatedAt,
                                 @UpdatedAt,
                                 @CreatedBy,
@@ -249,5 +253,44 @@ public class CampaignContributionsRepository(
         
         transaction.Commit();
         return updateCampaignContributionResult;
+    }
+
+    public async Task<Result<IEnumerable<CampaignContribution>>> GetCampaignContributionsByCampaignId(Guid campaignId)
+    {
+        using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+        var sqlCommand = """
+                         SELECT
+                             cc.id AS Id,
+                             cc.campaign_id AS CampaignId,
+                             CASE
+                                 WHEN cc.donator_name IS NULL OR cc.donator_name = '' THEN au.first_name || ' ' || au.last_name
+                                 ELSE cc.donator_name
+                             END AS DonatorName,
+                             CASE
+                                 WHEN cc.message IS NULL OR cc.message = '' THEN 'No message provided.'
+                                 ELSE cc.message
+                             END AS Message,
+                             cc.contribution_method AS ContributionMethod,
+                             cc.unit_of_measurement AS UnitOfMeasurement,
+                             cc.amount AS Amount,
+                             cc.created_at AS CreatedAt,
+                             cc.created_by AS CreatedBy,
+                             cc.updated_at AS UpdatedAt,
+                             cc.updated_by AS UpdatedBy
+                         FROM campaign_contributions cc
+                         JOIN app_users au ON cc.user_id = au.id
+                         WHERE cc.campaign_id = @CampaignId;
+                         
+                         """;
+        var campaignContributions = (await dbConnection.QueryAsync<CampaignContribution>(
+            sqlCommand,
+            new { CampaignId = campaignId }
+        )).ToArray();
+        
+        if (campaignContributions.Length == 0)
+        {
+            return new ProblemDetailsError($"No contributions found for campaign ID: {campaignId}");
+        }
+        return campaignContributions;
     }
 }
