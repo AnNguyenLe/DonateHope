@@ -1,8 +1,10 @@
 using Asp.Versioning;
 using DonateHope.Core.Common.ExtensionMethods;
 using DonateHope.Core.ConfigurationOptions.AppServer;
+using DonateHope.Core.DTOs.CampaignContributionDTOs;
 using DonateHope.Core.DTOs.CampaignDTOs;
 using DonateHope.Core.Mappers;
+using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +22,8 @@ public class CampaignController(
     IOptions<MyAppServerConfiguration> myAppServerConfiguration,
     ICampaignCreateService campaignCreateService,
     ICampaignRetrieveService campaignRetrieveService,
-    ICampaignUpdateService campaignUpdateService
+    ICampaignUpdateService campaignUpdateService,
+    ICampaignContributionRetrieveService campaignContributionRetrieveService
 ) : CustomControllerBase
 {
     private readonly UserManager<AppUser> _userManager = userManager;
@@ -29,6 +32,7 @@ public class CampaignController(
     private readonly ICampaignCreateService _campaignCreateService = campaignCreateService;
     private readonly ICampaignRetrieveService _campaignRetrieveService = campaignRetrieveService;
     private readonly ICampaignUpdateService _campaignUpdateService = campaignUpdateService;
+    private readonly ICampaignContributionRetrieveService _campaignContributionRetrieveService = campaignContributionRetrieveService;
 
     [HttpGet(Name = nameof(GetCampaigns))]
     public async Task<ActionResult<IEnumerable<CampaignGetResponseDto>>> GetCampaigns()
@@ -146,5 +150,22 @@ public class CampaignController(
         }
 
         return NoContent();
+    }
+    
+    [HttpGet("{id}/contribution/report", Name = nameof(GetCampaignContributionsByCampaignId))]
+    public async Task<ActionResult<IEnumerable<CampaignContributionGetResponseDto>>> GetCampaignContributionsByCampaignId([FromRoute] Guid id)
+    {
+        var userId = _userManager.GetUserId(User);
+        if (userId is null)
+        {
+            return BadRequestProblemDetails("Unable to identify user");
+        }
+        var result = await _campaignContributionRetrieveService.GetCampaignContributionsByCampaignIdAsync(id);
+
+        if (result.IsFailed)
+        {
+            return result.Errors.ToDetailedBadRequest();
+        }
+        return result.Value.ToList();
     }
 }
