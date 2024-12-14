@@ -94,18 +94,18 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
         {
             Id = r.id,
             Content = r.content,
-            CreatedAt = r.CreatedAt,
-            UpdatedAt = r.UpdatedAt,
-            CreatedBy = r.CreatedBy,
-            UpdatedBy = r.UpdatedBy,
-            IsDeleted = r.IsDeleted ?? false,
-            DeletedAt = r.DeletedAt,
-            DeletedBy = r.DeletedBy,
-            IsBanned = r.IsBanned ?? false,
-            UserId = r.UserId,
-            CampaignId = r.CampaignId,
-            FirstName = r.FirstName,
-            LastName = r.LastName
+            CreatedAt = r.createdat,
+            UpdatedAt = r.updatedat,
+            CreatedBy = r.createdby,
+            UpdatedBy = r.updatedby,
+            IsDeleted = r.isdeleted ?? false,
+            DeletedAt = r.deletedat,
+            DeletedBy = r.deletedby,
+            IsBanned = r.isbanned ?? false,
+            UserId = r.userid,
+            CampaignId = r.campaignid,
+            FirstName = r.firstname,
+            LastName = r.lastname
         });
 
         var countSql = "SELECT COUNT(*) FROM campaign_comments WHERE campaign_id = @CampaignId AND is_deleted = false";
