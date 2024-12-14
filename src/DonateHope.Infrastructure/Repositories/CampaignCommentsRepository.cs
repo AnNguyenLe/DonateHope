@@ -9,6 +9,7 @@ using FluentResults;
 using Microsoft.EntityFrameworkCore;
 namespace DonateHope.Infrastructure.Repositories;
 
+
 public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory, ApplicationDbContext applicationDbContext) : ICampaignCommentsRepository
 {
     private readonly IDbConnectionFactory _dbConnectionFactory = dbConnectionFactory;
@@ -50,13 +51,14 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
                     );
             """;
 
-        // TODO: Update campaign_log also
         return await dbConnection.ExecuteAsync(sqlCommand, campaignComment);
     }
 
-    public async Task<IEnumerable<CampaignComment>> GetCommentsByCampaignId(Guid campaignId)
+    public async Task<(IEnumerable<CampaignComment> Comments, int TotalCount)> GetCommentsByCampaignId(Guid campaignId, int page = 1, int pageSize = 6)
     {
         using var dbConnection = await _dbConnectionFactory.CreateConnectionAsync();
+
+        var offset = (page - 1) * pageSize;
 
         var sqlCommand = """
     SELECT 
@@ -82,12 +84,34 @@ public class CampaignCommentsRepository(IDbConnectionFactory dbConnectionFactory
         c.campaign_id = @CampaignId
         AND c.is_deleted = false
     ORDER BY 
-        c.created_at DESC;
+        c.created_at DESC
+    LIMIT @PageSize OFFSET @Offset;
     """;
 
-        var comments = await dbConnection.QueryAsync<CampaignComment>(sqlCommand, new { CampaignId = campaignId });
+        var result = await dbConnection.QueryAsync(sqlCommand, new { CampaignId = campaignId, PageSize = pageSize, Offset = offset });
 
-        return comments;
+        var comments = result.Select(r => new CampaignComment
+        {
+            Id = r.id,
+            Content = r.content,
+            CreatedAt = r.CreatedAt,
+            UpdatedAt = r.UpdatedAt,
+            CreatedBy = r.CreatedBy,
+            UpdatedBy = r.UpdatedBy,
+            IsDeleted = r.IsDeleted ?? false,
+            DeletedAt = r.DeletedAt,
+            DeletedBy = r.DeletedBy,
+            IsBanned = r.IsBanned ?? false,
+            UserId = r.UserId,
+            CampaignId = r.CampaignId,
+            FirstName = r.FirstName,
+            LastName = r.LastName
+        });
+
+        var countSql = "SELECT COUNT(*) FROM campaign_comments WHERE campaign_id = @CampaignId AND is_deleted = false";
+        var totalCount = await dbConnection.ExecuteScalarAsync<int>(countSql, new { CampaignId = campaignId });
+
+        return (comments, totalCount);
     }
 
     public async Task<Result<CampaignComment>> GetCampaignCommentById(Guid campaignCommentId)
