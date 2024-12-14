@@ -17,7 +17,7 @@ public class CampaignCommentRetrieveService(
 
     public async Task<Result<CampaignCommentGetResponseDto>> GetCampaignCommentById(Guid campaignCommentId)
     {
-      
+
 
         var campaignCommentResult = await _campaignCommentsRepository.GetCampaignCommentById(campaignCommentId);
         if (campaignCommentResult.IsFailed)
@@ -27,21 +27,20 @@ public class CampaignCommentRetrieveService(
 
         return _campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto(campaignCommentResult.Value);
     }
-    public async Task<Result<IEnumerable<CampaignCommentGetResponseDto>>> GetCommentsByCampaignId(Guid campaignId)
-{
-    // Lấy dữ liệu từ repository
-    var comments = await _campaignCommentsRepository.GetCommentsByCampaignId(campaignId);
-
-    // Nếu không có bình luận, trả về lỗi
-    if (comments == null || !comments.Any())
+    public async Task<Result<(IEnumerable<CampaignCommentGetResponseDto> Comments, int TotalCount)>> GetCommentsByCampaignId(Guid campaignId, int page = 1, int pageSize = 6)
     {
-        return new ProblemDetailsError($"No comments found for Campaign ID: {campaignId}");
+
+        var (comments, totalCount) = await _campaignCommentsRepository.GetCommentsByCampaignId(campaignId, page, pageSize);
+
+
+        if (comments == null || !comments.Any())
+        {
+            return new ProblemDetailsError($"No comments found for Campaign ID: {campaignId}");
+        }
+
+        var commentDtos = comments.Select(_campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto);
+
+        return Result.Ok((commentDtos, totalCount));
     }
-
-    // Ánh xạ dữ liệu từ entity sang DTO
-    var commentDtos = comments.Select(_campaignCommentMapper.MapCampaignCommentToCampaignCommentGetResponseDto);
-
-    return Result.Ok(commentDtos);
-}
 }
 

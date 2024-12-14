@@ -150,15 +150,24 @@ public class CampaignCommentController(
     }
 
     [HttpGet("campaign/{id}/comment", Name = nameof(GetCommentsByCampaignId))]
-    public async Task<ActionResult<List<CampaignCommentGetResponseDto>>> GetCommentsByCampaignId([FromRoute] Guid id)
+    public async Task<ActionResult> GetCommentsByCampaignId([FromRoute] Guid id, [FromQuery] int page = 1, [FromQuery] int pageSize = 6)
     {
-        var result = await _campaignCommentRetrieveService.GetCommentsByCampaignId(id);
+        pageSize = pageSize > 100 ? 100 : pageSize;
+        var result = await _campaignCommentRetrieveService.GetCommentsByCampaignId(id, page, pageSize);
 
         if (result.IsFailed)
         {
             return result.Errors.ToDetailedBadRequest();
         }
+        var (comments, totalCount) = result.Value;
 
-        return Ok(result.Value);
+        var response = new
+        {
+            TotalCount = totalCount,
+            Page = page,
+            PageSize = pageSize,
+            Comments = comments
+        };
+        return Ok(response);
     }
 }
