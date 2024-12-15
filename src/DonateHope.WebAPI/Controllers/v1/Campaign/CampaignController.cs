@@ -7,6 +7,7 @@ using DonateHope.Core.Mappers;
 using DonateHope.Core.ServiceContracts.CampaignContributionsServiceContracts;
 using DonateHope.Core.ServiceContracts.CampaignsServiceContracts;
 using DonateHope.Domain.IdentityEntities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -181,6 +182,20 @@ public class CampaignController(
     )
     {
         var result = await _campaignRetrieveService.FilterCampaigns(keyword);
+
+        if (result.IsFailed)
+        {
+            return result.Errors.ToDetailedBadRequest();
+        }
+
+        return Ok(result.Value);
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("landingpage", Name = nameof(GetTop3HighestRatingCampaigns))]
+    public async Task<ActionResult<IEnumerable<CampaignGetResponseDto>>> GetTop3HighestRatingCampaigns()
+    {
+        var result = await _campaignRetrieveService.GetTop3HighestRatingCampaigns();
 
         if (result.IsFailed)
         {
