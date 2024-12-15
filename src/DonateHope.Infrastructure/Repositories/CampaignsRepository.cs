@@ -193,6 +193,7 @@ public class CampaignsRepository(
                     description = @Description, 
                     goal_amount = @GoalAmount,
                     unit_of_measurement = @UnitOfMeasurement,
+                    spending_amount = @SpendingAmount,
                     expecting_start_date = @ExpectingStartDate,
                     expecting_end_date = @ExpectingEndDate,
                     proofs_url = @ProofsUrl,

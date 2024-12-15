@@ -8,6 +8,7 @@ public class CampaignCreateRequestDto
     public string? Description { get; init; }
     public decimal GoalAmount { get; init; }
     public string? UnitOfMeasurement { get; init; }
+    public decimal SpendingAmount { get; init; }
     public DateTime? ExpectingStartDate { get; init; }
     public DateTime? ExpectingEndDate { get; init; }
     public string? ProofsUrl { get; init; }
