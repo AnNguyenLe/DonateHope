@@ -10,5 +10,5 @@ public interface ICampaignRetrieveService
     Task<Result<IEnumerable<CampaignGetResponseDto>>> GetCampaigns();
     Task<Result<CampaignGetResponseDto>> GetCampaignByIdAsync(Guid campaignId);
     Task<Result<IEnumerable<CampaignGetResponseDto>>> FilterCampaigns(string keyword);
-    Task<Result<IEnumerable<CampaignGetResponseDto>>> GetTop3HighestRatingCampaigns();
+    Task<Result<IEnumerable<CampaignGetResponseDto>>> GetTopHighestRatingCampaigns();
 }

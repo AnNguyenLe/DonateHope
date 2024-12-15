@@ -192,10 +192,10 @@ public class CampaignController(
     }
     
     [AllowAnonymous]
-    [HttpGet("landingpage", Name = nameof(GetTop3HighestRatingCampaigns))]
-    public async Task<ActionResult<IEnumerable<CampaignGetResponseDto>>> GetTop3HighestRatingCampaigns()
+    [HttpGet("landingpage", Name = nameof(GetTopHighestRatingCampaigns))]
+    public async Task<ActionResult<IEnumerable<CampaignGetResponseDto>>> GetTopHighestRatingCampaigns()
     {
-        var result = await _campaignRetrieveService.GetTop3HighestRatingCampaigns();
+        var result = await _campaignRetrieveService.GetTopHighestRatingCampaigns();
 
         if (result.IsFailed)
         {

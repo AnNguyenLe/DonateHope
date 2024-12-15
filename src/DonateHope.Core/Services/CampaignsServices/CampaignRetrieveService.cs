@@ -64,7 +64,7 @@ public class CampaignRetrieveService(
         return Result.Ok(campaignDtos);
     }
     
-    public async Task<Result<IEnumerable<CampaignGetResponseDto>>> GetTop3HighestRatingCampaigns()
+    public async Task<Result<IEnumerable<CampaignGetResponseDto>>> GetTopHighestRatingCampaigns()
     {
         var campaignsListQuery = await _campaignsRepository.GetCampaigns();
 
