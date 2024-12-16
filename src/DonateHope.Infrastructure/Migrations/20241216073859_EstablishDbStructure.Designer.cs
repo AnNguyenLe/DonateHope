@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DonateHope.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241213165525_EstablishDbStructure")]
+    [Migration("20241216073859_EstablishDbStructure")]
     partial class EstablishDbStructure
     {
         /// <inheritdoc />
