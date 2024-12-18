@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using System.Text;
 using Asp.Versioning;
+using DonateHope.Core.Common.Authorization;
 using DonateHope.Core.ConfigurationOptions.AppServer;
 using DonateHope.Core.ConfigurationOptions.Jwt;
 using DonateHope.Core.ConfigurationOptions.Smtp;
@@ -166,6 +167,23 @@ public static class ConfigureServicesExtension
         services.Configure<MyAppServerConfiguration>(configuration.GetSection("MyAppServer"));
 
         services.AddHttpContextAccessor();
+
+        services
+            .AddAuthorizationBuilder()
+            .AddPolicy(
+                AppPolicies.RequireAdmin,
+                policy =>
+                {
+                    policy.RequireRole(AppUserRoles.ADMIN);
+                }
+            )
+            .AddPolicy(
+                AppPolicies.RequireCharity,
+                policy =>
+                {
+                    policy.RequireRole(AppUserRoles.CHARITY);
+                }
+            );
 
         return services;
     }

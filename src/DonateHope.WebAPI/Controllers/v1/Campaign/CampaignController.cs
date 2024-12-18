@@ -1,4 +1,5 @@
 using Asp.Versioning;
+using DonateHope.Core.Common.Authorization;
 using DonateHope.Core.Common.ExtensionMethods;
 using DonateHope.Core.ConfigurationOptions.AppServer;
 using DonateHope.Core.DTOs.CampaignContributionDTOs;
@@ -56,6 +57,7 @@ public class CampaignController(
         return Ok(result.Value);
     }
 
+    // [Authorize(Policy = AppPolicies.RequireCharity)]
     [HttpPost("create", Name = nameof(CreateCampaign))]
     public async Task<ActionResult<CampaignGetResponseDto>> CreateCampaign(
         [FromBody] CampaignCreateRequestDto createRequestDto
@@ -190,10 +192,12 @@ public class CampaignController(
 
         return Ok(result.Value);
     }
-    
+
     [AllowAnonymous]
     [HttpGet("landingpage", Name = nameof(GetTopHighestRatingCampaigns))]
-    public async Task<ActionResult<IEnumerable<CampaignGetResponseDto>>> GetTopHighestRatingCampaigns()
+    public async Task<
+        ActionResult<IEnumerable<CampaignGetResponseDto>>
+    > GetTopHighestRatingCampaigns()
     {
         var result = await _campaignRetrieveService.GetTopHighestRatingCampaigns();
 
