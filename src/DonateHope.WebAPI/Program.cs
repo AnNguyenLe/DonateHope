@@ -1,5 +1,7 @@
 using DonateHope.WebAPI.StartupExtensions;
+using DonateHope.Infrastructure.DbContext;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 app.UseRouting();
 
@@ -49,6 +51,13 @@ app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<DonateHope.Infrastructure.DbContext.ApplicationDbContext>();
+    context.Database.Migrate();
+}
 
 app.Run();
 
